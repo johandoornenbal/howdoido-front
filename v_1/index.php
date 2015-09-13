@@ -11,7 +11,11 @@
     <!--    END OVERRIDES-->
 </head>
 
-<body class="grey darken-2" ng-app="app">
+<body class="" ng-app="app">
+    
+    <?php
+        require_once("components/navigation.php");
+    ?>
     
     <div class="jumbotron">
         <div class="container">

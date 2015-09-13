@@ -1,4 +1,3 @@
-<!-- ****************** EDIT VERSION ************************************************************************ -->
 <div id="editVersion">
 
     <a name="home"></a>
@@ -57,13 +56,6 @@
 
     <div class="">
 
-        <?php require_once( "partials/pitch.php"); require_once( "partials/ambition.php"); require_once( "partials/experience.php"); require_once( "partials/highlight.php"); require_once( "partials/personal.php"); require_once( "partials/contact.php"); require_once( "partials/config.php");?>
-
-        <div class="section" style="min-height: 200px;">
-            <br />
-        </div>
-
     </div>
 
 </div>
-<!--  END  *************** EDIT VERSION *********************************************************************** -->
