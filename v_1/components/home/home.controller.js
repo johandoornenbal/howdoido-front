@@ -1,45 +1,35 @@
-﻿(function () {
+(function () {
     'use strict';
 
     angular
         .module('app')
         .controller('HomeController', HomeController);
 
-    HomeController.$inject = ['UserService', '$rootScope'];
-    function HomeController(UserService, $rootScope) {
+    HomeController.$inject = ['CurrentUserService', '$rootScope'];
+    function HomeController(CurrentUserService, $rootScope) {
         var vm = this;
 
         vm.user = null;
-        vm.allUsers = [];
-        vm.deleteUser = deleteUser;
+        vm.templates = [];
+        vm.receivedRequests = [];
+        vm.userdata = null;
 
         initController();
 
         function initController() {
-            loadCurrentUser();
-            loadAllUsers();
+            loadAllData();
         }
 
-        function loadCurrentUser() {
-            UserService.GetByUsername($rootScope.globals.currentUser.username)
-                .then(function (user) {
-                    vm.user = user;
+        function loadAllData() {
+            CurrentUserService.GetData()
+                .then(function (userdata) {
+                    vm.user = userdata.data.user;
+                    vm.userdata = userdata;
+                    vm.templates = userdata.data.user.templates;
+                    vm.receivedRequests = userdata.data.user.receivedRequests;
                 });
         }
 
-        function loadAllUsers() {
-            UserService.GetAll()
-                .then(function (users) {
-                    vm.allUsers = users;
-                });
-        }
-
-        function deleteUser(id) {
-            UserService.Delete(id)
-            .then(function () {
-                loadAllUsers();
-            });
-        }
     }
 
 })();

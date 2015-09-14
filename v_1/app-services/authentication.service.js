@@ -5,8 +5,8 @@
         .module('app')
         .factory('AuthenticationService', AuthenticationService);
 
-    AuthenticationService.$inject = ['$http', '$cookieStore', '$rootScope', '$timeout', 'UserService'];
-    function AuthenticationService($http, $cookieStore, $rootScope, $timeout, UserService) {
+    AuthenticationService.$inject = ['$http', '$cookieStore', '$rootScope', '$timeout', 'CurrentUserService'];
+    function AuthenticationService($http, $cookieStore, $rootScope, $timeout, CurrentUserService) {
         var service = {};
 
         service.Login = Login;
@@ -17,26 +17,8 @@
 
         function Login(username, password, callback) {
 
-            /* Dummy authentication for testing, uses $timeout to simulate api call
-             ----------------------------------------------*/
-//            $timeout(function () {
-//                var response;
-//                UserService.GetByUsername(username)
-//                    .then(function (user) {
-//                        if (user !== null && user.password === password) {
-//                            response = { success: true };
-//                        } else {
-//                            response = { success: false, message: 'Username or password is incorrect' };
-//                        }
-//                        callback(response);
-//                    });
-//            }, 1000);
-
-            /* Use this for real authentication
-             ----------------------------------------------*/
             $http.post('http://localhost:8080/restful/authenticate', { username: username, password: password })
                 .success(function (response) {
-                    console.log(response);
                     callback(response);
                 });
 

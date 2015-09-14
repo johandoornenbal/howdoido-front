@@ -36,12 +36,10 @@
     <script src="app-services/authentication.service.js"></script>
     <script src="app-services/flash.service.js"></script>
 
-    <!-- Real user service that uses an api -->
-    <!-- <script src="app-services/user.service.js"></script> -->
+    
+    <script src="app-services/currentuser.service.js"></script> 
 
-    <!-- Fake user service for demo that uses local storage -->
-    <script src="app-services/user.service.local-storage.js"></script>
-
+    
     <script src="components/home/home.controller.js"></script>
     <script src="components/login/login.controller.js"></script>
     <script src="components/register/register.controller.js"></script>

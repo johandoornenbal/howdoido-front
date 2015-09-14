@@ -1,11 +1,31 @@
-﻿<h1>Hi {{vm.user.firstName}}!</h1>
-<p>You're logged in!!</p>
-<h3>All registered users:</h3>
+<h2>Hi {{vm.user.name}}!</h2>
+<p>YOUR QUESTIONS</p>
 <ul>
-    <li ng-repeat="user in vm.allUsers">
-        {{user.username}} ({{user.firstName}} {{user.lastName}})
-        - <a href="#" ng-click="vm.deleteUser(user.id)">Delete</a>
+    <li ng-repeat="template in vm.templates">
+        {{template.name}}
+        <ul>
+            <li ng-repeat="question in template.questions">
+                - {{question.question}} - {{question.formType}}
+            </li>
+        </ul>
+        -------------------------------------------------------------------------------------------------------------
     </li>
 </ul>
+<p>YOUR RECEIVED REQUESTS</p>
+<ul>
+    <li ng-repeat="request in vm.receivedRequests">
+        from: {{request.requestOwnerName}} with email: {{request.requestOwnerEmail}}<br />
+        request uri: {{request.URI}}<br />
+        request template uri: {{request.requestTemplateURI}}
+        <ul>
+            <li ng-repeat="question in request.questions">
+                - {{question.question}} - {{question.formType}}
+            </li>
+        </ul>
+        -------------------------------------------------------------------------------------------------------------
+    </li>
+</ul>
+<p>Your data:</p>
+{{vm.userdata.data.user}}
 <p>&nbsp;</p>
 <p><a href="#/login" class="btn btn-primary">Logout</a></p>
