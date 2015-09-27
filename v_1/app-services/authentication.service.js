@@ -17,7 +17,7 @@
 
         function Login(username, password, callback) {
 
-            $http.post('http://localhost:8080/restful/authenticate', { username: username, password: password })
+            $http.post($rootScope.baseUrl + 'authenticate', { username: username, password: password })
                 .success(function (response) {
                     callback(response);
                 });
