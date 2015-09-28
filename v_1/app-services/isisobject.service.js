@@ -16,6 +16,7 @@
         var payload = {};
 
         service.GetObjectData = GetObjectData;
+        service.GetObjectDataPromise = GetObjectDataPromise;
         service.PerformFunctionOnObject = PerformFunctionOnObject;
 
         return service;
@@ -23,6 +24,10 @@
         function GetObjectData(objectUri) {
             return $http.get(baseURL + objectUri)
                 .then(handleSuccess, handleError('Error getting object data'));
+        }
+        
+        function GetObjectDataPromise(objectUri) {
+            return $http.get(baseURL + objectUri)
         }
 
         /* payload can address arguments directly instead of using 'value' each time */

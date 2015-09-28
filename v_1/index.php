@@ -43,6 +43,7 @@
 
     <script src="app-services/currentuser.service.js"></script>
     <script src="app-services/isisobject.service.js"></script>
+    <script src="app-services/isiscollection.service.js"></script>
 
     <script src="components/home/home.controller.js"></script>
     <script src="components/login/login.controller.js"></script>

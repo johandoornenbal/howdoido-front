@@ -1,33 +1,44 @@
-<h2>Hi {{vm.user.name}}!</h2> *******************ASK FEEDBACK*************************
-<form name="form" ng-submit="vm.sendFeedbackRequest()" role="form" novalidate>
-    <div class="md-padding">
-        <div>
-            <h1 class="md-title">Ask feedback</h1>
-            <div layout="row">
-                <md-input-container style="margin-right: 15px;">
-                    <label>Choose template</label>
-                    <md-select ng-model="template">
-                        <md-option ng-repeat="template in vm.templates" value="{{template.URI}}">{{template.name}} - {{template.category}}</md-option>
-                    </md-select>
-                </md-input-container>
-                <md-input-container style="margin-right: 15px;">
-                    <label>Choose user</label>
-                    <md-select ng-model="user">
-                        <md-option ng-repeat="user in vm.allUsers" value="{{user.href}}">{{user.title}}</md-option>
-                    </md-select>
-                </md-input-container>
+<h3>Hi {{vm.user.name}}!</h3> 
+
+<!--*******************ASK FEEDBACK*************************-->
+
+<div ng-controller="FormController">
+    <form name="form" ng-submit="sendRequest(template, user)" role="form" novalidate>
+        <div class="md-padding">
+            <div>
+                <h1 class="md-title">Ask feedback</h1>
+                <div layout="row">
+                    <md-input-container style="margin-right: 0px;">
+                        <label>Choose template</label>
+                        <md-select ng-model="template" required>
+                            <md-option ng-repeat="template in vm.templates" value="{{template.URI}}">{{template.name}} - {{template.category}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>    
+                <div layout="row">    
+                    <md-input-container style="margin-right: 0px;">
+                        <label>Choose user</label>
+                        <md-select ng-model="user" required>
+                            <md-option ng-repeat="user in vm.allUsers" value="{{user.href}}">{{user.title}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <p ng-show="requestSubmitted">SUCCES! Response:</p>
+                <p>{{sendRequestResponse}}</p>
             </div>
-            <p ng-if="user && template">You chose {{template}} and user {{user}}.</p>
         </div>
-    </div>
 
-    <div class="form-actions">
-        <button type="submit" class="btn btn-primary">ASK FEEDBACK</button>
-    </div>
-</form>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" ng-disabled="form.$invalid" ng-hide="requestSubmitted">ASK FEEDBACK</button>
+        </div>
+    </form>
+</div>
 
+<!--*******************ASK FEEDBACK*************************-->
 
-*******************ASK FEEDBACK*************************
+<p>RECEIVED FEEDBACK</p>
+{{vm.receivedFeedback}}
+
 
 <p>YOUR QUESTIONS</p>
 <ul>
@@ -55,28 +66,5 @@
         -------------------------------------------------------------------------------------------------------------
     </li>
 </ul>
-<p>Object data:</p>
-members:
-<br /> -------------------------------------------------------------------------------------------------------------
-<br />
-<ul>
-    <li ng-repeat="member in vm.members">
-        {{member.id}} - {{member.memberType}} - {{member.links[0].href}} - {{member.links[0].method}}
-    </li>
-</ul>
-<br />-------------------------------------------------------------------------------------------------------------
-<br /> {{vm.object}}
-<br />
-<br />-------------------------------------------------------------------------------------------------------------
-<br />
-<br />-------------------------------------------------------------------------------------------------------------
-<br /> {{vm.functionResponse}}
-<br />
-<br />-------------------------------------------------------------------------------------------------------------
-<br />
-<br />-------------------------------------------------------------------------------------------------------------
-<br />
-<p>Your data:</p>
-{{vm.userdata.data.user}}
 <p>&nbsp;</p>
 <p><a href="#/login" class="btn btn-primary">Logout</a></p>
