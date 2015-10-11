@@ -10,8 +10,8 @@
 
     function config($routeProvider, $locationProvider) {
         $routeProvider
-        
-        .when('/', {
+
+            .when('/', {
             controller: 'HomeController',
             templateUrl: 'components/home/home.view.html',
             controllerAs: 'vm'
@@ -34,7 +34,7 @@
             templateUrl: 'components/request/request.view.html',
             controllerAs: 'vm'
         })
-        
+
         .when('/feedback/URL/:feedbackUrl', {
             controller: 'FeedbackController',
             templateUrl: 'components/feedback/feedback.view.html',
@@ -45,7 +45,7 @@
             redirectTo: '/login'
         });
     }
-
+    
     run.$inject = ['$rootScope', '$location', '$cookieStore', '$http'];
 
     function run($rootScope, $location, $cookieStore, $http) {

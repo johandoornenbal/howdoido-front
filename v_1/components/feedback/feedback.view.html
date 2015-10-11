@@ -1,11 +1,43 @@
 <div class="col-md-6 col-md-offset-3">
     <h2>Give Feedback</h2>
-    
-<p>QUESTIONS TO ANSWER</p>
+    <p>QUESTIONS TO ANSWER</p>
     <ul>
-        <li ng-repeat="question in vm.questions">
-            {{question.question}} - {{question.formType}}
-        </li>
+        <form ng-submit="myForm.submitTheForm()" name="feedbackForm">
+            <li ng-repeat="question in vm.questions">
+
+                <div layout="row">
+                    <div flex='100'>
+                        {{question.number}} - {{question.question}}
+                    </div>
+                </div>
+                <div layout="row">
+                    <div flex='100'>
+                        <md-input-container>
+                            <label>Rating</label>
+                            <input type="text" ng-model="question.ratinginput" name="ratinginput" required md-maxlength="5">
+                        </md-input-container>
+                    </div>
+                </div>
+                <div layout="row" ng-show="question.explanation">
+                    <div flex='100'>
+                        <md-input-container>
+                            <label>Explanation</label>
+                            <input type="text" ng-model="question.explanationinput" name="explanationinput" required md-maxlength="200">
+                        </md-input-container>
+                    </div>
+                </div>
+            </li>
+            <div layout="row">
+                <div flex='100'>
+                    <input type="submit" value="Submit Form">
+                </div>
+            </div>
+        </form>
+        <div layout="row">
+            <div flex='100'>
+                {{vm.questions}}
+            </div>
+        </div>
     </ul>
-    
+
 </div>
