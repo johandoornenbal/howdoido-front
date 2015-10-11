@@ -10,15 +10,26 @@
     function FeedbackController($location, $routeParams, IsisObjectService, $http) {
 
         var vm = this;
+        vm.questions = [];
         vm.answers = [];
         vm.id = $routeParams.feedbackUrl.replace("L_", "");
 
         initController();
 
+        /****************************************************************************************************************************/
+        /****************************************************************************************************************************/
+        /****************************************************************************************************************************/
+
+
         function initController() {
             getQuestionsFromRequest();
             //            submitFeedbackFormForRatingExplanation("Good", "Dit is de uitleg");
         }
+
+
+        /****************************************************************************************************************************/
+        /****************************************************************************************************************************/
+        /****************************************************************************************************************************/
 
         /*
             Following pattern of http://solutionoptimist.com/2013/12/27/javascript-promise-chains-2/
@@ -31,7 +42,7 @@
                     .GetObjectDataPromise(requestUrl) // request 1
                     .then(
                         function(data) {
-                            console.log(data.data.members.basicTemplate.links[0].href); // response handler 1
+                            // console.log(data.data.members.basicTemplate.links[0].href); // response handler 1
                             return data.data.members.basicTemplate.links[0].href;
                         });
             };
@@ -40,17 +51,29 @@
                     .get(templateUrl) // request 2
                     .then(
                         function(data) {
-                            console.log(data.data.value.href); // response handler 2
+                            // console.log(data.data.value.href); // response handler 2
                             return data.data.value.href;
                         });
             };
-            var loadBasicQuestionArray = function(questionsUrl) {
+            var loadBasicCollectionLink = function(questionsUrl) {
                 return $http
                     .get(questionsUrl) //request 3
                     .then(
                         function(data) {
-                            console.log(data.data.members.basicQuestions.links); // response handler 3
-                            return data.data.members.basicQuestions.links;
+                            // console.log("handler 3: ");
+                            // console.log(data.data.members.basicQuestions.links); // response handler 3
+                            return data.data.members.basicQuestions.links[0].href;
+                        }
+                    );
+            };
+            var loadBasicQuestions = function(collectionLink) {
+                return $http
+                    .get(collectionLink)
+                    .then(
+                        function(data) {
+                            // console.log("handler 4: ");
+                            // console.log(data.data); // response handler 3
+                            return data.data;
                         }
                     );
             };
@@ -58,24 +81,31 @@
                 return $http
                     .get(questionUrl)
                     .then(function(data) {
-//                        console.log(data.data);
-                        console.log("title: " + data.data.value[0].title);
-                        console.log("title: " + data.data.value[0].href);
+                        // console.log(data.data);
+                        // console.log("title: " + data.data.title);
+                        console.log("formType: " + data.data.members.basicFormType.value);
+                        console.log("question: " + data.data.members.basicQuestion.value);
+                        var formType = data.data.members.basicFormType.value;
+                        var question = data.data.members.basicQuestion.value;
+                        vm.questions.push({"question" : question, "formType" : formType});
                     });
             };
 
             loadBasicRequest("objects/info.matchingservice.dom.Howdoido.BasicRequest/" + +vm.id)
                 .then(loadBasicTemplate)
-                .then(loadBasicQuestionArray)
-                .then(function(data) {
-                    data.forEach(
-                        function(entry) {
-//                            console.log(entry.href);  
-                            loadQuestionDetails(entry.href);
-                        }
+                .then(loadBasicCollectionLink)
+                .then(loadBasicQuestions)
+                .then(
+                    function(data) {
+                        // console.log(data.value);
+                        data.value.forEach(
+                            function(entry) {
+                                // console.log(entry.href);  
+                                loadQuestionDetails(entry.href);
+                            }
 
-                    )
-                });
+                        )
+                    });
 
         }
 
@@ -143,6 +173,11 @@
         //        }
 
         /*END - LEAVE AS EXAMPLE!! - */
+
+
+        /****************************************************************************************************************************/
+        /****************************************************************************************************************************/
+        /****************************************************************************************************************************/
 
         function submitFeedbackFormForRatingExplanation(rating, explanation) {
             IsisObjectService.PerformFunctionOnObjectPromise("objects/info.matchingservice.dom.Howdoido.BasicRequest/" + vm.id, "createFeedback", "", "POST")
