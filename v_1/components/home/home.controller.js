@@ -6,10 +6,9 @@
         .controller('HomeController', HomeController)
         .controller('FormController', FormController);
 
-    HomeController.$inject = ['CurrentUserService', 'IsisObjectService', 'IsisCollectionService', '$rootScope', '$q'];
+    HomeController.$inject = ['CurrentUserService', 'IsisObjectService', 'IsisCollectionService', '$rootScope', '$q', '$location'];
 
-    function HomeController(CurrentUserService, IsisObjectService, IsisCollectionService, $rootScope, $q) {
-
+    function HomeController(CurrentUserService, IsisObjectService, IsisCollectionService, $rootScope, $q, $location) {
         var vm = this;
         vm.user = null;
         vm.templates = [];
@@ -19,17 +18,14 @@
         vm.sendRequest = null;
         vm.sendRequestResponse = null;
         vm.receivedFeedback = [];
+        vm.unratedReceivedFeedback = [];
 
         initController();
 
         function initController() {
             loadAllData();
-//            loadIsisObject('objects/info.matchingservice.dom.Howdoido.BasicTemplate/L_3');
             getUsers();
-            getReceivedFeedback();
         }
-
-        //        .then(function(result){getReceivedFeedback(userdata.data.user.URI, 'receivedFeedback');})
 
         function loadAllData() {
             CurrentUserService.GetData()
@@ -38,6 +34,8 @@
                     vm.userdata = userdata;
                     vm.templates = userdata.data.user.templates;
                     vm.receivedRequests = userdata.data.user.receivedRequests;
+                    vm.unratedReceivedFeedback = userdata.data.user.unratedReceivedFeedback;
+                    vm.receivedFeedback = userdata.data.user.receivedFeedback;
                 });
         }
 
@@ -60,15 +58,8 @@
                 });
         }
 
-        function getReceivedFeedback() {
-            CurrentUserService.GetData()
-                .then(function(result){
-                    console.log(result);
-                    return IsisCollectionService.GetCollectionPromise(result.data.user.URI, 'receivedFeedback');
-                })
-                .then(function(result) {
-                    vm.receivedFeedback = result.data.value;
-                });
+        vm.createFeedbackUrl = function createFeedbackUrl(uri) {
+            return '#/feedback/URL/' + uri;
         }
 
     }

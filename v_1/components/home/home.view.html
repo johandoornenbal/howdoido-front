@@ -1,4 +1,4 @@
-<h3>Hi {{vm.user.name}}!</h3> 
+<h3>Hi {{vm.user.name}}!</h3>
 
 <!--*******************ASK FEEDBACK*************************-->
 
@@ -14,8 +14,8 @@
                             <md-option ng-repeat="template in vm.templates" value="{{template.URI}}">{{template.name}} - {{template.category}}</md-option>
                         </md-select>
                     </md-input-container>
-                </div>    
-                <div layout="row">    
+                </div>
+                <div layout="row">
                     <md-input-container style="margin-right: 0px;">
                         <label>Choose user</label>
                         <md-select ng-model="user" required>
@@ -36,35 +36,141 @@
 
 <!--*******************ASK FEEDBACK*************************-->
 
-<p>RECEIVED FEEDBACK</p>
-{{vm.receivedFeedback}}
-
-
-<p>YOUR QUESTIONS</p>
+<p>UNRATED RECEIVED FEEDBACK</p>
 <ul>
-    <li ng-repeat="template in vm.templates">
-        {{template.name}}
-        <ul>
-            <li ng-repeat="question in template.questions">
-                - {{question.question}} - {{question.formType}}
-            </li>
-        </ul>
-        -------------------------------------------------------------------------------------------------------------
+    <li ng-repeat="feedback in vm.unratedReceivedFeedback">
+        
+        <div layout="row">
+            <div flex='15'>
+                <button ng-disabled="feedback.formRated" class="btn btn-primary">RATE</button>
+            </div>
+            <div flex='15'>
+                <button ng-disabled="feedback.published" class="btn btn-primary">PUBLISH</button>
+            </div>
+            <div flex='70'>
+                Van {{feedback.formCreator}}
+            </div>
+        </div>
+        <div layout="row">
+            <div offset='30' flex='100'>
+                <ul>
+                    <li ng-repeat="answer in feedback.answers">
+                        <div layout="row">
+                            <div flex='10'>
+                                Rating: {{answer.rating}}
+                            </div>
+                            <div flex='90'>
+                                {{answer.title}}
+                            </div>
+                        </div>
+                        <div layout="row">
+                            <div flex='100'>
+                                {{answer.explanation}}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div layout="row">
+            <div offset='30' flex='15'>
+                Received:
+            </div>
+            <div flex='60'>
+                {{feedback.dateTime}}
+            </div>
+        </div>
+        <hr />
     </li>
 </ul>
+
 <p>YOUR RECEIVED REQUESTS</p>
 <ul>
     <li ng-repeat="request in vm.receivedRequests">
-        from: {{request.requestOwnerName}} with email: {{request.requestOwnerEmail}}
-        <br /> request uri: {{request.URI}}
-        <br /> request template uri: {{request.requestTemplateURI}}
-        <ul>
-            <li ng-repeat="question in request.questions">
-                - {{question.question}} - {{question.formType}}
-            </li>
-        </ul>
-        -------------------------------------------------------------------------------------------------------------
+        <div layout="row">
+            <div flex='20'>
+                <a class="btn btn-primary" ng-href="{{vm.createFeedbackUrl(request.id)}}">GIVE FEEDBACK</a>
+            </div>
+            <div flex='80'>
+                Question(s)
+            </div>
+        </div>
+        <div layout="row">
+            <div offset='20' flex='80'>
+                <ul>
+                    <div layout="row">
+                        <div flex='100'>
+                            <li ng-repeat="question in request.questions">
+                                {{question.question}}
+                            </li>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </div>
+        <div layout="row">
+            <div offset='20' flex='80'>
+                From: {{request.requestOwnerName}} with email: {{request.requestOwnerEmail}}
+            </div>
+        </div>
+        <div layout="row">
+            <div offset='20' flex='20'>
+                Received:
+            </div>
+            <div flex='60'>
+                {{request.dateTime}}
+            </div>
+        </div>
+        <hr />
     </li>
 </ul>
+
+<p>ALL RECEIVED FEEDBACK</p>
+<ul>
+    <li ng-repeat="feedback in vm.receivedFeedback">
+        <div layout="row">
+            <div flex='15'>
+                <button class="btn btn-primary" ng-disabled="feedback.formRated">RATE</button>
+            </div>
+            <div flex='15'>
+                <button class="btn btn-primary" ng-disabled="feedback.published">PUBLISH</button>
+            </div>
+            <div flex='70'>
+                Van {{feedback.formCreator}}
+            </div>
+        </div>
+        <div layout="row">
+            <div offset='30' flex='100'>
+                <ul>
+                    <li ng-repeat="answer in feedback.answers">
+                        <div layout="row">
+                            <div flex='10'>
+                                Rating: {{answer.rating}}
+                            </div>
+                            <div flex='90'>
+                                {{answer.title}}
+                            </div>
+                        </div>
+                        <div layout="row">
+                            <div flex='100'>
+                                {{answer.explanation}}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div layout="row">
+            <div offset='30' flex='15'>
+                Received:
+            </div>
+            <div flex='60'>
+                {{feedback.dateTime}}
+            </div>
+        </div>
+        <hr />
+    </li>
+</ul>
+
 <p>&nbsp;</p>
 <p><a href="#/login" class="btn btn-primary">Logout</a></p>

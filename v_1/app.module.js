@@ -34,6 +34,12 @@
             templateUrl: 'components/request/request.view.html',
             controllerAs: 'vm'
         })
+        
+        .when('/feedback/URL/:feedbackUrl', {
+            controller: 'FeedbackController',
+            templateUrl: 'components/feedback/feedback.view.html',
+            controllerAs: 'vm'
+        })
 
         .otherwise({
             redirectTo: '/login'
@@ -44,7 +50,7 @@
 
     function run($rootScope, $location, $cookieStore, $http) {
         //set base url
-        $rootScope.baseUrl = "http://acc.xtalus.gedge.nl/simple/restful/";
+        $rootScope.baseUrl = "http://localhost:8080/restful/";
 
         // keep user logged in after page refresh
         $rootScope.globals = $cookieStore.get('globals') || {};

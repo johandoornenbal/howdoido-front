@@ -18,6 +18,7 @@
         service.GetObjectData = GetObjectData;
         service.GetObjectDataPromise = GetObjectDataPromise;
         service.PerformFunctionOnObject = PerformFunctionOnObject;
+        service.PerformFunctionOnObjectPromise = PerformFunctionOnObjectPromise;
 
         return service;
 
@@ -57,6 +58,37 @@
                     return $http.get(baseURL + objectUri + '/actions/' + functionName + '/invoke',
                             wrappedPayload)
                         .then(handleSuccess, handleError('Error getting object data'));
+                    break;    
+
+                default:
+                    return 'functionmethod not allowed';
+            }
+            
+        }
+        
+        function PerformFunctionOnObjectPromise(objectUri, functionName, payload, functionMethod) {
+
+            var wrappedPayload = {};
+            
+            for (var key in payload) {
+                wrappedPayload[key] = {"value" : payload[key]}
+                console.log(wrappedPayload);
+            }
+
+            switch (functionMethod) {
+                case 'POST':
+                    return $http.post(baseURL + objectUri + '/actions/' + functionName + '/invoke',
+                            wrappedPayload);
+                    break;
+
+                case 'PUT':
+                    return $http.put(baseURL + objectUri + '/actions/' + functionName + '/invoke',
+                            wrappedPayload);
+                    break;
+                    
+                case 'GET':
+                    return $http.get(baseURL + objectUri + '/actions/' + functionName + '/invoke',
+                            wrappedPayload);
                     break;    
 
                 default:

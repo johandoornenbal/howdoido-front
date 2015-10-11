@@ -3,15 +3,8 @@
 
     angular
         .module('app')
-//        .factory('BaseUrl', BaseUrl)
         .factory('CurrentUserService', CurrentUserService);
     
-//    function BaseUrl(){
-//        var baseLocal = "http://acc.xtalus.gedge.nl/simple/restful/";
-//        var baseRemote = "http://example.com/api";
-//        var baseURL = baseLocal;
-//        return baseURL;
-//    }
 
     CurrentUserService.$inject = ['$http', '$rootScope'];
     function CurrentUserService($http, $rootScope) {

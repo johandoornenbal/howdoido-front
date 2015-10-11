@@ -49,6 +49,7 @@
     <script src="components/login/login.controller.js"></script>
     <script src="components/register/register.controller.js"></script>
     <script src="components/request/request.controller.js"></script>
+    <script src="components/feedback/feedback.controller.js"></script>
     
     <script src="../jquery/jquery.min.js"></script>
     <script src="../materialize/dist/js/materialize.min.js"></script>
