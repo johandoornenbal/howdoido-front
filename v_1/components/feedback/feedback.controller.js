@@ -23,7 +23,6 @@
 
         function initController() {
             getQuestionsFromRequest();
-            //            submitFeedbackFormForRatingExplanation("Good", "Dit is de uitleg");
         }
 
 
@@ -37,9 +36,9 @@
         */
         function getQuestionsFromRequest() {
 
-            var getTemplateLinkFromRequest = function(requestUrl) {
+            var getTemplateLinkFromRequest = function(requestURI) {
                 return IsisObjectService
-                    .GetObjectDataPromise(requestUrl) // request 1 returns reference to template
+                    .GetObjectDataPromise(requestURI) // request 1 returns reference to template
                     .then(
                         function(data) {
                             // response handler 1
@@ -83,16 +82,19 @@
                         // console.log("question: " + data.data.members.basicQuestion.value);
                         var formType = data.data.members.basicFormType.value;
                         var question = data.data.members.basicQuestion.value;
+                        var questionId = data.data.members.questionId.value;
                         var number = vm.questions.length + 1;
                         if (formType == "Rating With Explanation") {
                             vm.questions.push({
                                 "question": question,
+                                "questionId": questionId,
                                 "explanation": true,
                                 "number": number
                             });
                         } else {
                             vm.questions.push({
                                 "question": question,
+                                "questionId": questionId,
                                 "explanation": false,
                                 "number": number
                             });
@@ -118,177 +120,111 @@
 
         }
 
-        /*LEAVE AS EXAMPLE!!*/
-
-        //        function getQuestionsFromRequestStep2() {
-        //            IsisObjectService.
-        //            GetObjectDataPromise("objects/info.matchingservice.dom.Howdoido.BasicRequest/" + vm.id) // request 1
-        //                .then(
-        //                    function(data) {
-        //                        console.log(data.data.members.basicTemplate.links[0].href);
-        //                        return $http.get(data.data.members.basicTemplate.links[0].href); //request 2
-        //                    })
-        //                .then(
-        //                    function(data) {
-        //                        console.log(data.data.value.href);
-        //                        return $http.get(data.data.value.href); //request 3 
-        //                    })
-        //                .then(
-        //                    function(data) {
-        //                        console.log(data.data.members.basicQuestions.links);
-        //                        data.data.members.basicQuestions.links
-        //                            .forEach(
-        //                                function(entry) {
-        //                                    console.log(entry.href);
-        //                                    $http.get(entry.href)
-        //                                        .then(function(data) {
-        //                                            console.log(data.data);
-        //                                            console.log("title: " + data.data.value[0].title);
-        //                                            console.log("title: " + data.data.value[0].href);
-        //                                        })
-        //                                }
-        //                            )
-        //                    }
-        //                );
-        //        }
-        //
-        //        function getQuestionsFromRequestStep1() {
-        //            IsisObjectService.GetObjectDataPromise("objects/info.matchingservice.dom.Howdoido.BasicRequest/" + +vm.id).
-        //            then(
-        //                function(data) {
-        //                    console.log(data.data.members.basicTemplate.links[0].href);
-        //                    $http.get(data.data.members.basicTemplate.links[0].href).then(
-        //                        function(data) {
-        //                            console.log(data.data.value.href);
-        //                            $http.get(data.data.value.href).then(
-        //                                function(data) {
-        //                                    console.log(data.data.members.basicQuestions.links);
-        //                                    data.data.members.basicQuestions.links.forEach(function(entry) {
-        //                                        console.log(entry.href);
-        //                                        $http.get(entry.href).then(
-        //                                            function(data) {
-        //                                                console.log(data.data);
-        //                                                console.log("title: " + data.data.value[0].title);
-        //                                                console.log("title: " + data.data.value[0].href);
-        //                                            }
-        //                                        )
-        //                                    })
-        //                                }
-        //                            )
-        //                        }
-        //                    )
-        //                }
-        //            )
-        //        }
-
-        /*END - LEAVE AS EXAMPLE!! - */
-
-
         /****************************************************************************************************************************/
         /****************************************************************************************************************************/
         /****************************************************************************************************************************/
 
-        
-        function submitFeedbackFormForRatingExplanation(rating, explanation) {
-            IsisObjectService.PerformFunctionOnObjectPromise("objects/info.matchingservice.dom.Howdoido.BasicRequest/" + vm.id, "createFeedback", "", "POST")
-                .then(function(data) {
-                    vm.answers = data.data.result.members.answers.links;
-                    vm.answers.forEach(function(entry) {
-                        console.log(entry.href);
-                        $http.get(entry.href).then(
-                            function(data) {
-                                console.log(data.data.value);
-                                data.data.value.forEach(function(entry) {
-                                    console.log(entry.href);
-                                    $http.get(entry.href).then(
-                                        function(data) {
-                                            var link = data.data.members.updateRating.links[0].href;
-                                            link = link + "/invoke";
-                                            console.log(link);
-                                            var payload = {
-                                                "rating": {
-                                                    "value": rating
-                                                }
-                                            };
-                                            $http.post(link, payload).then(
-                                                function(data) {
-                                                    console.log(data.data);
-                                                    console.log(data.data.result.members.rating.value);
-                                                }
-                                            )
-                                            var link2 = data.data.members.updateExplanation.links[0].href;
-                                            link2 = link2 + "/invoke";
-                                            console.log("link2: " + link2);
-                                            var payload = {
-                                                "explanation": {
-                                                    "value": explanation
-                                                }
-                                            };
-                                            $http.post(link2, payload).then(
-                                                function(data) {
-                                                    console.log(data.data);
-                                                    console.log(data.data.result.members.explanation.value);
-                                                }
-                                            )
-                                        }
-                                    )
-                                })
-                            }
-                        )
-                    });
-                });
-        }        
-        
-//        function submitFeedbackFormForRatingExplanationOLD(rating, explanation) {
-//            IsisObjectService.PerformFunctionOnObjectPromise("objects/info.matchingservice.dom.Howdoido.BasicRequest/" + vm.id, "createFeedback", "", "POST")
-//                .then(function(data) {
-//                    vm.answers = data.data.result.members.answers.links;
-//                    vm.answers.forEach(function(entry) {
-//                        console.log(entry.href);
-//                        $http.get(entry.href).then(
-//                            function(data) {
-//                                console.log(data.data.value);
-//                                data.data.value.forEach(function(entry) {
-//                                    console.log(entry.href);
-//                                    $http.get(entry.href).then(
-//                                        function(data) {
-//                                            var link = data.data.members.updateRating.links[0].href;
-//                                            link = link + "/invoke";
-//                                            console.log(link);
-//                                            var payload = {
-//                                                "rating": {
-//                                                    "value": rating
-//                                                }
-//                                            };
-//                                            $http.post(link, payload).then(
-//                                                function(data) {
-//                                                    console.log(data.data);
-//                                                    console.log(data.data.result.members.rating.value);
-//                                                }
-//                                            )
-//                                            var link2 = data.data.members.updateExplanation.links[0].href;
-//                                            link2 = link2 + "/invoke";
-//                                            console.log("link2: " + link2);
-//                                            var payload = {
-//                                                "explanation": {
-//                                                    "value": explanation
-//                                                }
-//                                            };
-//                                            $http.post(link2, payload).then(
-//                                                function(data) {
-//                                                    console.log(data.data);
-//                                                    console.log(data.data.result.members.explanation.value);
-//                                                }
-//                                            )
-//                                        }
-//                                    )
-//                                })
-//                            }
-//                        )
-//                    });
-//                });
-//        }
 
+        vm.submitFeedbackFormForRatingExplanation = function submitFeedbackFormForRatingExplanation() {
+
+            var createFeedback = function(requestURI) {
+                return IsisObjectService
+                    //request returns link to answer collection
+                    .PerformFunctionOnObjectPromise(requestURI, "createFeedback", "", "POST")
+                    .then(
+                        function(data) {
+                            // console.log(data.data);
+                            var linkToAnswerCollection = data.data.result.members.answers.links[0].href;
+                            console.log(linkToAnswerCollection);
+                            return linkToAnswerCollection;
+                        }
+                    );
+            };
+
+            var getAnswers = function(linkToAnswerCollection) {
+                return $http
+                    // returns an array of objects containing links to answers
+                    .get(linkToAnswerCollection)
+                    .then(
+                        function(data) {
+                            // console.log(data.data.value);
+                            var objectsContainingHrefsToAnswers = data.data.value;
+                            return (objectsContainingHrefsToAnswers);
+                        }
+                    );
+            };
+
+            var updateRating = function(linkToAnswer, rate) {
+                var link = linkToAnswer + "/actions/updateRating/invoke"
+                var payLoad = {
+                        "rating": {
+                            "value": rate
+                        }
+                    }
+                    // updates rating of answer and returns result
+                return $http
+                    .post(link, payLoad)
+                    .then(
+                        function(data) {
+                            console.log(data.data);
+                            var result = data.data.result.members.rating.value;
+                            console.log(data.data.result.members.rating.value);
+                            return result;
+                        }
+                    );
+            };
+
+            var updateExplanation = function(linkToAnswer, explanation) {
+                var link = linkToAnswer + "/actions/updateExplanation/invoke"
+                var payLoad = {
+                        "explanation": {
+                            "value": explanation
+                        }
+                    }
+                    // updates rating of explanation and returns result
+                return $http
+                    .post(link, payLoad)
+                    .then(
+                        function(data) {
+                            console.log(data.data);
+                            var result = data.data.result.members.explanation.value;
+                            console.log(result);
+                            return result;
+                        }
+                    );
+            };
+
+            createFeedback("objects/info.matchingservice.dom.Howdoido.BasicRequest/" + vm.id)
+                .then(getAnswers)
+                .then(
+                    function(data) {
+                        console.log(data);
+                        data
+                            .forEach(
+                                function(entry) {
+                                    vm.questions
+                                        .forEach(
+                                            function(question) {
+                                                //get the right question
+                                                if (entry.title == question.questionId) {
+
+                                                    updateRating(entry.href, question.ratinginput);
+                                                    
+                                                    //check if explanation is asked for
+                                                    if (question.explanation) {
+                                                        
+                                                        updateExplanation(entry.href, question.explanationinput);
+                                                        
+                                                    }
+
+                                                }
+                                            }
+                                        );
+                                }
+                            );
+                    }
+                );
+        }
     }
 
 })();

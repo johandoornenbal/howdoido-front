@@ -2,7 +2,7 @@
     <h2>Give Feedback</h2>
     <p>QUESTIONS TO ANSWER</p>
     <ul>
-        <form ng-submit="myForm.submitTheForm()" name="feedbackForm">
+        <form ng-submit="vm.submitFeedbackFormForRatingExplanation()" name="feedbackForm">
             <li ng-repeat="question in vm.questions">
 
                 <div layout="row">
@@ -14,7 +14,7 @@
                     <div flex='100'>
                         <md-input-container>
                             <label>Rating</label>
-                            <input type="text" ng-model="question.ratinginput" name="ratinginput" required md-maxlength="5">
+                            <input type="text" ng-model="question.ratinginput" name="ratinginput" required md-maxlength="15">
                         </md-input-container>
                     </div>
                 </div>
@@ -22,7 +22,7 @@
                     <div flex='100'>
                         <md-input-container>
                             <label>Explanation</label>
-                            <input type="text" ng-model="question.explanationinput" name="explanationinput" required md-maxlength="200">
+                            <input type="text" ng-model="question.explanationinput" name="explanationinput"  md-maxlength="200">
                         </md-input-container>
                     </div>
                 </div>

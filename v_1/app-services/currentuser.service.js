@@ -21,6 +21,7 @@
         // private functions
 
         function handleSuccess(data) {
+            console.log(data);
             return data;
         }
 
