@@ -6,9 +6,9 @@
         .controller('HomeController', HomeController)
         .controller('FormController', FormController);
 
-    HomeController.$inject = ['CurrentUserService', 'IsisObjectService', 'IsisCollectionService', '$rootScope', '$q', '$location'];
+    HomeController.$inject = ['CurrentUserService', '$rootScope', '$q', '$location', 'ROService'];
 
-    function HomeController(CurrentUserService, IsisObjectService, IsisCollectionService, $rootScope, $q, $location) {
+    function HomeController(CurrentUserService, $rootScope, $q, $location, ROService) {
         var vm = this;
         vm.user = null;
         vm.templates = [];
@@ -19,38 +19,61 @@
         vm.sendRequestResponse = null;
         vm.receivedFeedback = [];
         vm.unratedReceivedFeedback = [];
+//        vm.test1 = null;
+//        vm.test2 = [];
+//        vm.test3 = {};
 
         initController();
 
         function initController() {
-            loadAllData();
+            loadAllUserData();
             getUsers();
+//            test("objects/info.matchingservice.dom.Howdoido.BasicUser/0");
         }
 
-        function loadAllData() {
+        /* Example of ROService use */
+        function test(href) {
+
+            var test3 = function test3(href) {
+                return ROService.GetRO(href).then(
+                    function(data) {
+                        vm.test3 = data;
+                        return data;
+                    }
+                );
+            }
+
+            var getCollection = function getCollection(data) {
+                return ROService.GetCollection(data.myTemplates.href)
+                    .then(
+                        function(data) {
+                            vm.test2 = data;
+                            return data;
+                        }
+                    );
+            }
+            
+            test3(href).then(getCollection);
+            
+        }
+        /* END Example of ROService use */
+
+        function loadAllUserData() {
             CurrentUserService.GetData()
                 .then(function(userdata) {
                     vm.user = userdata.data.user;
-                    vm.userdata = userdata;
+                    // update $rootScope.globals.currentUser
+                    $rootScope.globals.currentUser.userdata = userdata.data.user;
                     vm.templates = userdata.data.user.templates;
                     vm.receivedRequests = userdata.data.user.receivedRequests;
                     vm.unratedReceivedFeedback = userdata.data.user.unratedReceivedFeedback;
                     vm.receivedFeedback = userdata.data.user.receivedFeedback;
                 });
         }
-
-        function loadIsisObject(objectUri) {
-            IsisObjectService.GetObjectData(objectUri)
-                .then(function(userdata) {
-                    vm.object = userdata.data;
-                    vm.members = userdata.data.members;
-                });
-        }
-
+        
         function getUsers() {
-            IsisObjectService.PerformFunctionOnObject(
-                    'services/Api',
-                    'allUsers',
+            ROService.PerformFunction(
+                    'services/Api/actions/allUsers',
                     '',
                     'POST')
                 .then(function(userdata) {
@@ -64,9 +87,9 @@
 
     }
 
-    FormController.$inject = ['$scope', '$location', 'IsisObjectService'];
+    FormController.$inject = ['$scope', '$location', 'ROService'];
 
-    function FormController($scope, $location, IsisObjectService) {
+    function FormController($scope, $location, ROService) {
 
         $scope.send = function sendFeedbackRequest() {
             $location.path('/request');
@@ -80,19 +103,18 @@
                 }
             };
             $scope.requestSubmitted = function() {
-                return false
+                return false;
             };
             console.log(payLoad);
-            IsisObjectService.PerformFunctionOnObject(
-                    templateUri,
-                    'createRequest',
+            ROService.PerformFunction(
+                    templateUri + "/actions/createRequest",
                     payLoad,
                     'POST')
                 .then(function(userdata) {
                     if (userdata.data != null) {
                         $scope.sendRequestResponse = userdata.data.result.members.OID.value;
                         $scope.requestSubmitted = function() {
-                            return true
+                            return true;
                         };
                     } else {
                         $scope.sendRequestResponse = "Sorry... ERROR sending request";

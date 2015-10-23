@@ -1,0 +1,179 @@
+<div class="col-md-6 col-md-offset-3">
+    <h2>Templates administration</h2>
+    <h3>Create new template (questions)</h3>
+    <button ng-click="vm.createTemplate = true" ng-hide="vm.createTemplate">New template</button>
+    <form name="newTemplateForm" ng-show=vm.createTemplate novalidate>
+        <div layout="row">
+            <div flex='100'>
+                <md-input-container>
+                    <label>Template name (min. 4 chars)</label>
+                    <input type="text" ng-model="vm.newTemplate.name" name="newTemplateName">
+                </md-input-container>
+            </div>
+        </div>
+        <div layout="row">
+            <div flex='100'>
+                <md-input-container style="margin-right: 0px;">
+                    <label>Choose topcategory</label>
+                    <md-select ng-model="vm.newTemplate.category" required>
+                        <md-option ng-repeat="category in vm.allTopCategories" value="{{category.href}}">{{category.title}}</md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+        </div>
+        <div ng-repeat="number in vm.numberOfNewQuestions">
+            <div layout="row">
+                <div flex='100'>
+                    <md-input-container style="margin-right: 0px;">
+                        <label>Question</label>
+                        <input type="text" ng-model="vm.newTemplate.question[number]" name="newTemplateQuestion" required>
+                    </md-input-container>
+                </div>
+            </div>
+            <div layout="row">
+                <div flex='100'>
+                    <md-input-container style="margin-right: 0px;">
+                        <label>FormType</label>
+                        <md-select ng-model="vm.newTemplate.formType[number]" required>
+                            <md-option value="RATING" selected>Only rating</md-option>
+                            <md-option value="RATING_WITH_EXPLANATION">Rating with explanation</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </div>
+        </div>
+        <div layout="row">
+            <div flex='50'>
+                <button ng-click="vm.addNewQuestion()">Add question</button>
+            </div>
+            <div flex='50'>
+                <button ng-click="vm.deleteLastQuestion()" ng-show="vm.numberOfNewQuestions.length > 1">Delete last question</button>
+            </div>
+        </div>
+        <div layout="row">
+            <div flex='50'>
+                <input type="submit" value="submit" ng-hide="vm.newTemplate.name.length > 3 && vm.newTemplate.category.length > 2" disabled>
+                <input ng-click="vm.submitNewTemplateForm()" type="submit" value="submit" ng-show="vm.newTemplate.name.length > 3 && vm.newTemplate.category.length > 2">
+            </div>
+            <div flex='50'>
+                <button ng-click="vm.resetNewTemplate()">Reset</button>
+            </div>
+        </div>
+    </form>
+    <hr /> {{vm.newTemplate}}
+    <div ng-hide="vm.createTemplate">
+        <h3>My templates</h3>
+        <form name="templatesForm" novalidate>
+            <ul>
+                <li ng-repeat="template in vm.userdata.templates">
+                    <div layout="row">
+                        <div flex='60'>
+                            {{template.name}}
+                        </div>
+                        <div flex='20' ng-hide="template.delete">
+                            <input type="button" ng-click="template.edit = true" name="edit" value="edit" ng-hide="template.edit">
+                            <input type="button" ng-click="template.edit = false" name="reset" value="reset" ng-show="template.edit">
+                        </div>
+                        <div flex='20' ng-hide="template.edit">
+                            <input type="button" ng-click="template.delete = true" name="delete" value="delete" ng-hide="template.delete">
+                            <input type="button" ng-click="template.delete = false" name="reset" value="reset" ng-show="template.delete">
+                        </div>
+                    </div>
+                    <div layout="row" ng-show="template.edit">
+                        <div flex='100'>
+                            <md-input-container>
+                                <label>Name</label>
+                                <input type="text" ng-model="template.name" name="name" ng-value="template.name">
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div layout="row" ng-show="template.edit">
+                        <div flex='100'>
+                            <md-input-container style="margin-right: 0px;">
+                                <label>Category</label>
+                                <md-select ng-model="template.newCategory" required>
+                                    <md-option value="" selected>{{template.category}}</md-option>
+                                    <md-option ng-repeat="category in vm.allTopCategories" value="{{category.href}}">{{category.title}}</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                    </div>
+
+                    <div ng-repeat="question in template.questions" ng-show="template.edit">
+                        <div layout="row">
+                            <div flex='100'>
+                                <md-input-container style="margin-right: 0px;">
+                                    <label>Question:</label>
+                                    <input type="text" ng-model="question.question" name="question" value="{{question.question}}">
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <div layout="row">
+                            <div flex='100'>
+                                <md-input-container style="margin-right: 0px;">
+                                    <label>FormType:</label>
+                                    <md-select ng-model="question.newFormType" required>
+                                        <md-option value="" selected>{{question.formType}}</md-option>
+                                        <md-option value="RATING">Rating only</md-option>
+                                        <md-option value="RATING_WITH_EXPLANATION">Rating with explanation</md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <input type="text" ng-model="question.id" name="id" ng-value="question.id" disabled>
+                            </div>
+                        </div>
+                        <div layout="row">
+                        <div flex='100'>
+                            <button ng-click="question.delete=true;">Delete question</button>
+                        </div>
+                    </div>
+                    </div>
+                    
+                    <!-- new question -->
+
+                    <div layout="row" ng-show="template.edit">
+                        <div flex='100'>
+                            <button ng-click="template.addQuestion=true;" ng-hide="template.addQuestion">Add question</button>
+                        </div>
+                    </div>
+                    <div ng-show="template.edit && template.addQuestion">
+                        <div layout="row">
+                            <div flex='100'>
+                                <md-input-container style="margin-right: 0px;">
+                                    <label>Question:</label>
+                                    <input type="text" ng-model="template.newQuestion.question" name="question" value="{{question.question}}">
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <div layout="row">
+                            <div flex='100'>
+                                <md-input-container style="margin-right: 0px;">
+                                    <label>FormType:</label>
+                                    <md-select ng-model="template.newQuestion.newFormType" required>
+                                        <md-option value="RATING" selected>RATING</md-option>
+                                        <md-option value="RATING_WITH_EXPLANATION">RATING_WITH_EXPLANATION</md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <input type="text" ng-model="question.id" name="id" ng-value="question.id" disabled>
+                            </div>
+                        </div>
+                        <div layout="row">
+                            <div flex='100'>
+                                <button ng-click="template.addQuestion=false;">Undo add question</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END new question END -->
+                    
+                    <div layout="row" ng-show="template.edit || template.delete">
+                        <div flex='100'>
+                            <input ng-click="vm.submitTemplatesForm()" type="submit" value="submit changes (to all templates!)">
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </form>
+        {{vm.userdata.templates}}
+    </div>
+
+
+</div>

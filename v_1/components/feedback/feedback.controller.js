@@ -5,9 +5,9 @@
         .module('app')
         .controller('FeedbackController', FeedbackController);
 
-    FeedbackController.$inject = ['$location', '$routeParams', 'IsisObjectService', '$http'];
+    FeedbackController.$inject = ['$location', '$routeParams', 'IsisObjectService', 'ROService', '$http'];
 
-    function FeedbackController($location, $routeParams, IsisObjectService, $http) {
+    function FeedbackController($location, $routeParams, IsisObjectService, ROService, $http) {
 
         var vm = this;
         vm.questions = [];
@@ -35,54 +35,54 @@
             Refactoring Step1 and step2 below
         */
         function getQuestionsFromRequest() {
-
+            
             var getTemplateLinkFromRequest = function(requestURI) {
-                return IsisObjectService
-                    .GetObjectDataPromise(requestURI) // request 1 returns reference to template
+                return ROService
+                    .GetRO(requestURI) // request 1 returns reference to template
                     .then(
                         function(data) {
                             // response handler 1
-                            //console.log(data.data);
-                            //console.log(data.data.members.basicTemplate.value.href); 
-                            return data.data.members.basicTemplate.value.href;
+                            // console.log(data);
+                            // console.log(data.basicTemplate.value.href); 
+                            return data.basicTemplate.value.href;
                         });
             };
+
             var getQuestionCollectionLinkFromTemplate = function(templateUrl) {
-                return $http
-                    .get(templateUrl) //request 2 returns a link to question collection on template
+                return ROService
+                    .GetRO(templateUrl) //request 2 returns a link to question collection on template
                     .then(
                         function(data) {
                             // response handler 2
                             // console.log(data.data);
                             // console.log("handler 2: ");
-                            // console.log(data.data.members.basicQuestions.links); 
-                            return data.data.members.basicQuestions.links[0].href;
+                            // console.log(data.basicQuestions.href); 
+                            return data.basicQuestions.href;
                         }
                     );
             };
+            
             var getQuestionLinksFromQuestionCollection = function(collectionLink) {
-                return $http
-                    .get(collectionLink)
+                return ROService
+                    .GetCollection(collectionLink)
                     .then(
                         function(data) {
                             // response handler 3
                             // console.log("handler 3: ");
-                            // console.log(data.data); 
-                            return data.data;
+                            // console.log(data); 
+                            return data;
                         }
                     );
             };
+
             var getQuestionDetails = function(questionUrl) {
-                return $http
-                    .get(questionUrl)
+                return ROService
+                    .GetRO(questionUrl)
                     .then(function(data) {
-                        // console.log(data.data);
-                        // console.log("title: " + data.data.title);
-                        // console.log("formType: " + data.data.members.basicFormType.value);
-                        // console.log("question: " + data.data.members.basicQuestion.value);
-                        var formType = data.data.members.basicFormType.value;
-                        var question = data.data.members.basicQuestion.value;
-                        var questionId = data.data.members.questionId.value;
+                        // console.log(data);
+                        var formType = data.basicFormType.value;
+                        var question = data.basicQuestion.value;
+                        var questionId = data.questionId.value;
                         var number = vm.questions.length + 1;
                         if (formType == "Rating With Explanation") {
                             vm.questions.push({
@@ -103,16 +103,17 @@
                     });
             };
 
+            
             getTemplateLinkFromRequest("objects/info.matchingservice.dom.Howdoido.BasicRequest/" + vm.id)
                 .then(getQuestionCollectionLinkFromTemplate)
                 .then(getQuestionLinksFromQuestionCollection)
                 .then(
                     function(data) {
                         // console.log(data.value);
-                        data.value.forEach(
+                        data.forEach(
                             function(entry) {
-                                // console.log(entry.href);  
-                                getQuestionDetails(entry.href);
+                                // console.log(entry);  
+                                getQuestionDetails(entry);
                             }
 
                         )

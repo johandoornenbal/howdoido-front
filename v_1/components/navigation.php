@@ -8,10 +8,10 @@
             </div>
         </ul>
         <ul id="slide-out" class="side-nav">
-            <li><a href="#home">Home</a></li>
+            <li><a href="#/">Home</a></li>
             <li>
-                <a href="#pitchAnchor">
-                    <i class="material-icons btn-floating btn-large circle orange " style="font-size: 50px;">star_border</i> &nbsp;Pitch
+                <a href="#/templates">
+                    <i class="material-icons btn-floating btn-large circle orange " style="font-size: 50px;">star_border</i> &nbsp;Templates
                 </a>
             </li>
             <li>

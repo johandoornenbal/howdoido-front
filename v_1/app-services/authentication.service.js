@@ -1,4 +1,4 @@
-(function () {
+(function() {
     'use strict';
 
     angular
@@ -6,6 +6,7 @@
         .factory('AuthenticationService', AuthenticationService);
 
     AuthenticationService.$inject = ['$http', '$cookieStore', '$rootScope', '$timeout', 'CurrentUserService'];
+
     function AuthenticationService($http, $cookieStore, $rootScope, $timeout, CurrentUserService) {
         var service = {};
 
@@ -17,8 +18,11 @@
 
         function Login(username, password, callback) {
 
-            $http.post($rootScope.baseUrl + 'authenticate', { username: username, password: password })
-                .success(function (response) {
+            $http.post($rootScope.baseUrl + 'authenticate', {
+                    username: username,
+                    password: password
+                })
+                .success(function(response) {
                     callback(response);
                 });
 
@@ -28,11 +32,12 @@
             var authdata = Base64.encode(username + ':' + password);
 
             $rootScope.globals = {
-                currentUser: {
-                    username: username,
-                    authdata: authdata
-                }
-            };
+                        currentUser: {
+                            username: username,
+                            authdata: authdata
+                        }
+                    };
+            
 
             $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
             $cookieStore.put('globals', $rootScope.globals);
@@ -50,7 +55,7 @@
 
         keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
 
-        encode: function (input) {
+        encode: function(input) {
             var output = "";
             var chr1, chr2, chr3 = "";
             var enc1, enc2, enc3, enc4 = "";
@@ -84,7 +89,7 @@
             return output;
         },
 
-        decode: function (input) {
+        decode: function(input) {
             var output = "";
             var chr1, chr2, chr3 = "";
             var enc1, enc2, enc3, enc4 = "";

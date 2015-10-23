@@ -1,5 +1,9 @@
 <h3>Hi {{vm.user.name}}!</h3>
 
+{{vm.test1}}<br />
+{{vm.test2}}<br />
+{{vm.test3}}
+
 <!--*******************ASK FEEDBACK*************************-->
 
 <div ng-controller="FormController">
@@ -60,7 +64,7 @@
                                 Rating: {{answer.rating}}
                             </div>
                             <div flex='90'>
-                                {{answer.questionToAnswer}}
+                                Question: {{answer.questionToAnswer}}
                             </div>
                         </div>
                         <div layout="row">
@@ -148,7 +152,7 @@
                                 Rating: {{answer.rating}}
                             </div>
                             <div flex='90'>
-                                {{answer.title}}
+                                Question: {{answer.questionToAnswer}}
                             </div>
                         </div>
                         <div layout="row">

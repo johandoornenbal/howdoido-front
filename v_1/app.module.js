@@ -40,6 +40,12 @@
             templateUrl: 'components/feedback/feedback.view.html',
             controllerAs: 'vm'
         })
+        
+        .when('/templates', {
+            controller: 'TemplatesController',
+            templateUrl: 'components/templates/templates.view.html',
+            controllerAs: 'vm'
+        })
 
         .otherwise({
             redirectTo: '/login'

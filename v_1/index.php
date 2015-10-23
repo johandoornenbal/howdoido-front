@@ -43,6 +43,7 @@
 
     <script src="app-services/currentuser.service.js"></script>
     <script src="app-services/isisobject.service.js"></script>
+    <script src="app-services/ro.service.js"></script>
     <script src="app-services/isiscollection.service.js"></script>
 
     <script src="components/home/home.controller.js"></script>
@@ -50,6 +51,7 @@
     <script src="components/register/register.controller.js"></script>
     <script src="components/request/request.controller.js"></script>
     <script src="components/feedback/feedback.controller.js"></script>
+    <script src="components/templates/templates.controller.js"></script>
     
     <script src="../jquery/jquery.min.js"></script>
     <script src="../materialize/dist/js/materialize.min.js"></script>
