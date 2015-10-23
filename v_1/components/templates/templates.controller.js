@@ -207,7 +207,20 @@
                             if (template.addQuestion && template.newQuestion.question != "" && template.newQuestion.newFormType != "") {
                                 addQuestion();
                             }
-
+                            
+                            //check if not all question are deleted
+                            var noQuestionsLeft = true;
+                            template.questions.forEach(
+                                function(question){
+                                    if (!question.delete) {
+                                        noQuestionsLeft = false;
+                                    }
+                                }
+                            );
+                            if (noQuestionsLeft && !template.addQuestion) {
+                                alert("You have deleted all questions of the template. Unless you add one the template is quite useless....");
+                            }
+                            
                             template.questions.forEach(
                                 function(question) {
                                     console.log(question);

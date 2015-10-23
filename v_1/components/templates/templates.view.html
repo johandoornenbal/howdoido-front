@@ -1,7 +1,10 @@
 <div class="col-md-6 col-md-offset-3">
     <h2>Templates administration</h2>
+    <!-- *************************************************************************************************
+        CREATE NEW TEMPLATE
+******************************************************************************************************-->
     <h3>Create new template (questions)</h3>
-    <button ng-click="vm.createTemplate = true" ng-hide="vm.createTemplate">New template</button>
+    <button ng-click="vm.createTemplate = true" class="btn btn-primary" ng-hide="vm.createTemplate">New template</button>
     <form name="newTemplateForm" ng-show=vm.createTemplate novalidate>
         <div layout="row">
             <div flex='100'>
@@ -44,23 +47,34 @@
         </div>
         <div layout="row">
             <div flex='50'>
-                <button ng-click="vm.addNewQuestion()">Add question</button>
+                <button ng-click="vm.addNewQuestion()" class="btn-xs btn-primary">Add question</button>
             </div>
             <div flex='50'>
-                <button ng-click="vm.deleteLastQuestion()" ng-show="vm.numberOfNewQuestions.length > 1">Delete last question</button>
+                <button ng-click="vm.deleteLastQuestion()" class="btn-xs btn-primary" ng-show="vm.numberOfNewQuestions.length > 1">Delete last question</button>
             </div>
         </div>
         <div layout="row">
             <div flex='50'>
-                <input type="submit" value="submit" ng-hide="vm.newTemplate.name.length > 3 && vm.newTemplate.category.length > 2" disabled>
-                <input ng-click="vm.submitNewTemplateForm()" type="submit" value="submit" ng-show="vm.newTemplate.name.length > 3 && vm.newTemplate.category.length > 2">
+                <md-input-container style="margin-right: 0px; margin-top: 5px;" ng-hide="vm.newTemplate.name.length > 3 && vm.newTemplate.category.length > 2">
+                    <input type="submit" class="btn btn-primary" value="submit"  disabled>
+                </md-input-container>
+                <md-input-container style="margin-right: 0px; margin-top: 5px;" ng-show="vm.newTemplate.name.length > 3 && vm.newTemplate.category.length > 2">
+                    <input ng-click="vm.submitNewTemplateForm()" class="btn btn-primary" type="submit" value="submit">
+                </md-input-container>
             </div>
             <div flex='50'>
-                <button ng-click="vm.resetNewTemplate()">Reset</button>
+                <md-input-container style="margin-right: 0px; margin-top: 5px; margin-left: 5px;">
+                    <button ng-click="vm.resetNewTemplate()" class="btn btn-warning">Reset</button>
+                </md-input-container>
             </div>
         </div>
     </form>
-    <hr /> {{vm.newTemplate}}
+    <!--    <hr /> {{vm.newTemplate}}-->
+
+    <!-- *************************************************************************************************
+        EDIT TEMPLATES
+******************************************************************************************************-->
+
     <div ng-hide="vm.createTemplate">
         <h3>My templates</h3>
         <form name="templatesForm" novalidate>
@@ -71,12 +85,12 @@
                             {{template.name}}
                         </div>
                         <div flex='20' ng-hide="template.delete">
-                            <input type="button" ng-click="template.edit = true" name="edit" value="edit" ng-hide="template.edit">
-                            <input type="button" ng-click="template.edit = false" name="reset" value="reset" ng-show="template.edit">
+                            <input type="button" ng-click="template.edit = true" name="edit" value="edit" ng-hide="template.edit" class="btn-xs btn-primary">
+                            <input type="button" ng-click="template.edit = false" name="reset" value="reset" ng-show="template.edit" class="btn-xs btn-warning">
                         </div>
                         <div flex='20' ng-hide="template.edit">
-                            <input type="button" ng-click="template.delete = true" name="delete" value="delete" ng-hide="template.delete">
-                            <input type="button" ng-click="template.delete = false" name="reset" value="reset" ng-show="template.delete">
+                            <input type="button" ng-click="template.delete = true" name="delete" value="delete" ng-hide="template.delete" class="btn-xs btn-danger">
+                            <input type="button" ng-click="template.delete = false" name="reset" value="reset" ng-show="template.delete" class="btn-xs btn-warning">
                         </div>
                     </div>
                     <div layout="row" ng-show="template.edit">
@@ -100,7 +114,7 @@
                     </div>
 
                     <div ng-repeat="question in template.questions" ng-show="template.edit">
-                        <div layout="row">
+                        <div layout="row" ng-hide="question.delete">
                             <div flex='100'>
                                 <md-input-container style="margin-right: 0px;">
                                     <label>Question:</label>
@@ -108,7 +122,7 @@
                                 </md-input-container>
                             </div>
                         </div>
-                        <div layout="row">
+                        <div layout="row" ng-hide="question.delete">
                             <div flex='100'>
                                 <md-input-container style="margin-right: 0px;">
                                     <label>FormType:</label>
@@ -121,18 +135,22 @@
                                 <input type="text" ng-model="question.id" name="id" ng-value="question.id" disabled>
                             </div>
                         </div>
+                        <div ng-show="question.delete">
+                            DELETED: {{question.question}}
+                        </div>
                         <div layout="row">
-                        <div flex='100'>
-                            <button ng-click="question.delete=true;">Delete question</button>
+                            <div flex='100'>
+                                <button ng-click="question.delete=true;" ng-hide="question.delete" class="btn-xs btn-danger">Delete question</button>
+                                <button ng-click="question.delete=false;" ng-show="question.delete" class="btn-xs btn-warning">Undelete question</button>
+                            </div>
                         </div>
                     </div>
-                    </div>
-                    
+
                     <!-- new question -->
 
                     <div layout="row" ng-show="template.edit">
-                        <div flex='100'>
-                            <button ng-click="template.addQuestion=true;" ng-hide="template.addQuestion">Add question</button>
+                        <div flex='100' style="margin-right: 0px; margin-top: 5px;">
+                            <button ng-click="template.addQuestion=true;" ng-hide="template.addQuestion" class="btn-xs btn-primary">Add question</button>
                         </div>
                     </div>
                     <div ng-show="template.edit && template.addQuestion">
@@ -158,21 +176,21 @@
                         </div>
                         <div layout="row">
                             <div flex='100'>
-                                <button ng-click="template.addQuestion=false;">Undo add question</button>
+                                <button ng-click="template.addQuestion=false;" class="btn-xs btn-warning">Undo add question</button>
                             </div>
                         </div>
                     </div>
                     <!-- END new question END -->
-                    
+
                     <div layout="row" ng-show="template.edit || template.delete">
-                        <div flex='100'>
-                            <input ng-click="vm.submitTemplatesForm()" type="submit" value="submit changes (to all templates!)">
+                        <div flex='100' style="margin-right: 0px; margin-top: 5px; margin-bottom: 5px;">
+                            <input ng-click="vm.submitTemplatesForm()" type="submit" value="submit changes (to all templates!)" class="btn btn-primary">
                         </div>
                     </div>
                 </li>
             </ul>
         </form>
-        {{vm.userdata.templates}}
+        <!--        {{vm.userdata.templates}}-->
     </div>
 
 
