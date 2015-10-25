@@ -87,22 +87,25 @@
 
                         <!--START SECTION FOR TEMPLATE-->
                         <div layout="row">
-                            <div flex='60'>
+                            <div flex='40'>
                                 {{template.name}}
                             </div>
                             <div flex='20' ng-hide="template.delete">
-                                <input type="button" ng-click="template.edit = true; vm.editing = true;" name="edit" value="edit" ng-hide="template.edit" class="btn-xs btn-primary">
+                                <input type="button" ng-click="template.edit = true; vm.editing = true; template.newName = template.name;" name="edit" value="edit" ng-hide="template.edit" class="btn-xs btn-primary">
                             </div>
                             <div flex='20' ng-hide="template.edit">
                                 <input type="button" ng-click="template.delete = true; vm.deleting = true;" name="delete" value="delete" ng-hide="template.delete" class="btn-xs btn-danger">
                                 <input type="button" ng-click="template.delete = false; vm.deleting = false;" name="reset" value="reset" ng-show="template.delete" class="btn-xs btn-warning">
+                            </div>
+                            <div flex='20'>
+                                <input type="button" ng-click="vm.copyTemplate(template.URI)" name="copy" value="copy" class="btn-xs btn-warning" ng-hide="template.delete || template.edit">
                             </div>
                         </div>
                         <div layout="row" ng-show="template.edit">
                             <div flex='100'>
                                 <md-input-container>
                                     <label>Name</label>
-                                    <input type="text" ng-model="template.name" name="name" ng-value="template.name">
+                                    <input type="text" ng-model="template.newName" name="name" ng-value="template.name">
                                 </md-input-container>
                             </div>
                         </div>

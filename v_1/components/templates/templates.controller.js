@@ -57,6 +57,12 @@
                     function(data) {
                         vm.userdata = data.data.user;
                         $rootScope.globals.currentUser.userdata = data.data.user;
+                        return data.data.user;
+                    },
+                    function(data) {
+                        vm.userdata = data.data.user;
+                        $rootScope.globals.currentUser.userdata = data.data.user;
+                        return data.data.user;
                     }
                 );
         }
@@ -78,6 +84,13 @@
             vm.newTemplate.question[vm.numberOfNewQuestions.length - 1] = "";
             vm.newTemplate.formType[vm.numberOfNewQuestions.length - 1] = "";
             vm.numberOfNewQuestions.pop(vm.numberOfNewQuestions.length - 1);
+        }
+
+        vm.copyTemplate = function copyTemplate(URI) {
+            ROService.PerformFunction(URI + "/actions/duplicateBasicTemplate", "", "POST")
+                .then(function(data) {
+                    resetUserData();
+                });
         }
 
         /****************************************************************************************************************************/
@@ -106,7 +119,7 @@
 
                         var updateName = function() {
                             var payLoadName = {
-                                "string": template.name
+                                "string": template.newName
                             };
                             return ROService.PerformFunction(template.URI + "/actions/updateName", payLoadName, "POST")
                                 .then(
@@ -114,6 +127,8 @@
                                         if (data.success == false) {
                                             alert("Problem updating name; please try again");
                                         }
+                                        template.newName = "";
+                                        resetUserData();
                                     }
                                 );
                         };
@@ -199,7 +214,8 @@
                         // Actual performing of actions for EDIT
                         if (template.edit) {
 
-                            updateName().then(resetUserData());
+                            updateName();
+                            
                             if (template.newCategory != "") {
                                 updateCategory();
                             }
@@ -207,11 +223,11 @@
                             if (template.addQuestion && template.newQuestion.question != "" && template.newQuestion.newFormType != "") {
                                 addQuestion();
                             }
-                            
+
                             //check if not all question are deleted
                             var noQuestionsLeft = true;
                             template.questions.forEach(
-                                function(question){
+                                function(question) {
                                     if (!question.delete) {
                                         noQuestionsLeft = false;
                                     }
@@ -220,7 +236,7 @@
                             if (noQuestionsLeft && !template.addQuestion) {
                                 alert("You have deleted all questions of the template. Unless you add one the template is quite useless....");
                             }
-                            
+
                             template.questions.forEach(
                                 function(question) {
                                     console.log(question);
