@@ -40,7 +40,7 @@
             templateUrl: 'components/feedback/feedback.view.html',
             controllerAs: 'vm'
         })
-        
+
         .when('/templates', {
             controller: 'TemplatesController',
             templateUrl: 'components/templates/templates.view.html',
@@ -51,7 +51,7 @@
             redirectTo: '/login'
         });
     }
-    
+
     run.$inject = ['$rootScope', '$location', '$cookieStore', '$http'];
 
     function run($rootScope, $location, $cookieStore, $http) {
@@ -62,6 +62,12 @@
         $rootScope.globals = $cookieStore.get('globals') || {};
         if ($rootScope.globals.currentUser) {
             $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
+            //test voor CORS om te zien of 'PUT' probleem kan worden opgelost...
+            $http.defaults.useXDomain = true;
+            $http.defaults.withCredentials = true;
+            delete $http.defaults.headers.common["X-Requested-With"];
+            $http.defaults.headers.common["Accept"] = "application/json";
+            $http.defaults.headers.common["Content-Type"] = "application/json";
         }
 
         $rootScope.$on('$locationChangeStart', function(event, next, current) {
