@@ -5,7 +5,7 @@
 ******************************************************************************************************-->
     <div ng-hide="vm.editing || vm.deleting">
         <h3>Create new template (questions form)</h3>
-        <button ng-click="vm.createTemplate = true; vm.newTemplate.category = null; vm.newTemplate.subCategory = null;" class="btn btn-primary" ng-hide="vm.createTemplate">New template</button>
+        <button ng-click="vm.createTemplate = true; vm.newTemplate.category = null; vm.newTemplate.subCategory = null; vm.newSubCategoriesList = [];" class="btn btn-primary" ng-hide="vm.createTemplate">New template</button>
         <form name="newTemplateForm" ng-show=vm.createTemplate novalidate>
             <div layout="row">
                 <div flex='100'>
@@ -31,7 +31,7 @@
             <div layout="row" ng-show="vm.newTemplate.category!=null">
                 <div flex='100'>
                     <label>Sub Category</label>
-                    <md-autocomplete md-selected-item="vm.newTemplate.subCategory" md-search-text="searchText" md-items="subCategory in vm.newSubCategoriesList" md-item-text="subCategory.title" placeholder="Select a sub category if you wish (start typing)">
+                    <md-autocomplete md-selected-item="vm.newTemplate.subCategory" md-search-text="" md-items="subCategory in vm.newSubCategoriesList" md-item-text="subCategory.title" placeholder="Select a sub category if you wish (start typing)">
                         <md-item-template>
                             <span md-highlight-text="searchText">{{subCategory.title}}</span>
                         </md-item-template>
@@ -42,6 +42,16 @@
                 </div>
             </div>
             <!--END OPTIONAL SUBCATEGORY END-->
+            <!--SUBCATEGORY SUGGESTION-->
+            <div layout="row" ng-show="vm.newTemplate.category!=null">
+                <div flex='100'>
+                    <md-input-container>
+                        <label>Optional: Suggest a subcategory of the chosen category</label>
+                        <input type="text" ng-model="vm.newTemplate.categorySuggestion" name="categorySuggestion">
+                    </md-input-container>
+                </div>
+            </div>
+            <!--END SUBCATEGORY SUGGESTION END-->
             <div ng-repeat="number in vm.numberOfNewQuestions">
                 <div layout="row">
                     <div flex='100'>
@@ -87,7 +97,7 @@
                 </div>
             </div>
         </form>
-<!--            <hr /> {{vm.newTemplate}}-->
+<!--                    <hr /> {{vm.newTemplate}}-->
     </div>
     <!-- *************************************************************************************************
         EDIT TEMPLATES
@@ -108,7 +118,7 @@
                                 {{template.name}}
                             </div>
                             <div flex='20' ng-hide="template.delete">
-                                <input type="button" ng-click="template.edit = true; vm.editing = true; template.newName = template.name; template.currentCategory = template.category; template.newCategory=null;" name="edit" value="edit" ng-hide="template.edit" class="btn-xs btn-primary">
+                                <input type="button" ng-click="vm.setEditTemplate(template)" name="edit" value="edit" ng-hide="template.edit" class="btn-xs btn-primary">
                             </div>
                             <div flex='20' ng-hide="template.edit">
                                 <input type="button" ng-click="template.delete = true; vm.deleting = true;" name="delete" value="delete" ng-hide="template.delete" class="btn-xs btn-danger">
@@ -134,7 +144,7 @@
                                 <div ng-hide="template.newCategory!=null">Current Category: {{template.currentCategory}}</div>
                                 <md-input-container>
                                     <label>Choose top category</label>
-                                    <md-select ng-model="template.newCategory" md-on-close="vm.subCategories(template.newCategory);">
+                                    <md-select ng-model="template.newCategory" md-on-close="vm.subCategories(template.newCategory); template.newCategorySuggestion=null;">
                                         <md-option ng-repeat="category in vm.allTopCategories" ng-value="category.href">{{category.title}}</md-option>
                                     </md-select>
                                 </md-input-container>
@@ -156,7 +166,16 @@
                             </div>
                         </div>
                         <!--END OPTIONAL SUBCATEGORY END-->
-
+                        <!--SUBCATEGORY SUGGESTION-->
+                        <div layout="row" ng-show="(template.edit && template.newCategory!=null) || (template.edit && template.categorySuggestion.length > 0) ">
+                            <div flex='100'>
+                                <md-input-container>
+                                    <label>Optional: Suggest a subcategory of the chosen category</label>
+                                    <input type="text" ng-model="template.newCategorySuggestion" name="categorySuggestion">
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <!--END SUBCATEGORY SUGGESTION END-->
                         <div ng-repeat="question in template.questions" ng-show="template.edit">
                             <div layout="row" ng-hide="question.delete">
                                 <div flex='100'>
@@ -176,7 +195,6 @@
                                             <md-option value="RATING_WITH_EXPLANATION">Rating with explanation</md-option>
                                         </md-select>
                                     </md-input-container>
-                                    <input type="text" ng-model="question.id" name="id" ng-value="question.id" disabled>
                                 </div>
                             </div>
                             <div ng-show="question.delete">
@@ -215,7 +233,6 @@
                                             <md-option value="RATING_WITH_EXPLANATION">RATING_WITH_EXPLANATION</md-option>
                                         </md-select>
                                     </md-input-container>
-                                    <!--                                    <input type="text" ng-model="question.id" name="id" ng-value="question.id" disabled>-->
                                 </div>
                             </div>
                             <div layout="row">
@@ -240,7 +257,7 @@
                 </li>
             </ul>
         </form>
-        <!--        {{vm.userdata.templates}}-->
+<!--                {{vm.userdata.templates}}-->
     </div>
 
 

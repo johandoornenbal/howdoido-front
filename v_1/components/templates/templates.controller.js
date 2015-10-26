@@ -17,6 +17,7 @@
             vm.newTemplate = {};
             vm.newTemplate.question = {};
             vm.newTemplate.formType = {};
+            vm.newTemplate.subCategory = null;
             vm.newTemplate.question[0] = "";
             vm.newTemplate.formType[0] = "";
             vm.subCategoriesList = [];
@@ -139,6 +140,15 @@
                 });
         }
 
+        vm.setEditTemplate = function(template) {
+            template.edit = true;
+            vm.editing = true;
+            template.newName = template.name;
+            template.currentCategory = template.category;
+            template.newCategory = null;
+            template.newCategorySuggestion = template.categorySuggestion;
+        }
+
         /****************************************************************************************************************************/
         /****************************************************************************************************************************/
         /****************************************************************************************************************************/
@@ -211,6 +221,28 @@
                                         }
                                         template.newSubCategory = null;
                                         resetUserData();
+                                    }
+                                );
+                        };
+
+                        var updateCategorySuggestion = function() {
+                            var payLoadCategorySuggestion = "";
+                            if (template.hasOwnProperty("newCategorySuggestion") && template.newCategorySuggestion != "" && template.newCategorySuggestion != null) {
+                                payLoadCategorySuggestion = {
+                                    "string": template.newCategorySuggestion
+                                };
+                            } else {
+                                payLoadCategorySuggestion = {
+                                    "string": "_NOVALUE_"
+                                };
+                            }
+
+                            ROService.PerformFunction(template.URI + "/actions/updateCategorySuggestion", payLoadCategorySuggestion, "POST")
+                                .then(
+                                    function(data) {
+                                        if (data.success == false) {
+                                            alert("Problem updating category suggestion; please try again");
+                                        }
                                     }
                                 );
                         };
@@ -290,6 +322,10 @@
                                 }
                             }
 
+                            
+                            updateCategorySuggestion();
+                            
+
                             if (template.addQuestion && template.newQuestion.question != "" && template.newQuestion.newFormType != "") {
                                 addQuestion();
                             }
@@ -363,11 +399,24 @@
                 };
             }
 
+            //adapt payload if there is a category suggestion
+            if (vm.newTemplate.hasOwnProperty("categorySuggestion") && vm.newTemplate.categorySuggestion != "") {
+                payLoad["categorySuggestion"] = vm.newTemplate.categorySuggestion;
+            }
+
 
             var createNewTemplate = function() {
+
+                var href = "";
+                if (payLoad.hasOwnProperty("categorySuggestion")) {
+                    href = "http://localhost:8080/restful/objects/info.matchingservice.dom.Howdoido.BasicUser/0/actions/createTemplateWithCategorySuggestion";
+                } else {
+                    href = "http://localhost:8080/restful/objects/info.matchingservice.dom.Howdoido.BasicUser/0/actions/createTemplate";
+                }
+
                 return ROService
                     .PerformFunction(
-                        "http://localhost:8080/restful/objects/info.matchingservice.dom.Howdoido.BasicUser/0/actions/createTemplate",
+                        href,
                         payLoad, "POST")
                     .then(
                         function(data) {
@@ -379,6 +428,7 @@
                             return data;
                         }
                     );
+
             };
 
             var createNewQuestion = function(templateHref, question, formType) {
@@ -427,6 +477,7 @@
                         //reset form
                         vm.resetNewTemplate();
                     });
+
         }
     }
 
