@@ -19,6 +19,8 @@
             vm.newTemplate.formType = {};
             vm.newTemplate.question[0] = "";
             vm.newTemplate.formType[0] = "";
+            vm.subCategoriesList = [];
+            vm.newSubCategoriesList = [];
         }
 
         allTopCategories().then(
@@ -93,6 +95,50 @@
                 });
         }
 
+        vm.subCategories = function subCategories(categoryHref) {
+            vm.subCategoriesList = [];
+            ROService.GetCollection(categoryHref + "/collections/allDescendantCategories")
+                .then(function(data) {
+                    data.forEach(
+                        function(element) {
+                            ROService.GetRO(element)
+                                .then(
+                                    function(data) {
+                                        var subCat = {
+                                            "title": data.title,
+                                            "href": element
+                                        };
+                                        vm.subCategoriesList.push(subCat);
+                                        return data.title;
+                                    }
+                                );
+                        }
+                    );
+                });
+        }
+
+        vm.newSubCategories = function subCategories(categoryHref) {
+            vm.newSubCategoriesList = [];
+            ROService.GetCollection(categoryHref + "/collections/allDescendantCategories")
+                .then(function(data) {
+                    data.forEach(
+                        function(element) {
+                            ROService.GetRO(element)
+                                .then(
+                                    function(data) {
+                                        var subCat = {
+                                            "title": data.title,
+                                            "href": element
+                                        };
+                                        vm.newSubCategoriesList.push(subCat);
+                                        return data.title;
+                                    }
+                                );
+                        }
+                    );
+                });
+        }
+
         /****************************************************************************************************************************/
         /****************************************************************************************************************************/
         /****************************************************************************************************************************/
@@ -145,7 +191,25 @@
                                         if (data.success == false) {
                                             alert("Problem updating category; please try again");
                                         }
-                                        template.newCategory = "";
+                                        template.newCategory = null;
+                                        resetUserData();
+                                    }
+                                );
+                        };
+
+                        var updateCategoryWithSubCategory = function() {
+                            var payLoadCategory = {
+                                "basicCategory": {
+                                    "href": template.newSubCategory.href
+                                }
+                            };
+                            return ROService.PerformFunction(template.URI + "/actions/updateCategory", payLoadCategory, "POST")
+                                .then(
+                                    function(data) {
+                                        if (data.success == false) {
+                                            alert("Problem updating sub category; please try again");
+                                        }
+                                        template.newSubCategory = null;
                                         resetUserData();
                                     }
                                 );
@@ -215,9 +279,15 @@
                         if (template.edit) {
 
                             updateName();
-                            
-                            if (template.newCategory != "") {
-                                updateCategory();
+
+                            if (template.hasOwnProperty("newSubCategory") && template.newSubCategory != null) {
+                                if (template.newSubCategory.hasOwnProperty("href")) {
+                                    updateCategoryWithSubCategory();
+                                }
+                            } else {
+                                if (template.hasOwnProperty("newCategory") && template.newCategory != null) {
+                                    updateCategory();
+                                }
                             }
 
                             if (template.addQuestion && template.newQuestion.question != "" && template.newQuestion.newFormType != "") {
@@ -277,12 +347,22 @@
             console.log("submitNewTemplateForm: ");
 
             //Prepare function vars
-            var payLoad = {
-                "name": vm.newTemplate.name,
-                "category": {
-                    "href": vm.newTemplate.category
-                }
-            };
+            if (vm.newTemplate.subCategory != null) {
+                var payLoad = {
+                    "name": vm.newTemplate.name,
+                    "category": {
+                        "href": vm.newTemplate.subCategory.href
+                    }
+                };
+            } else {
+                var payLoad = {
+                    "name": vm.newTemplate.name,
+                    "category": {
+                        "href": vm.newTemplate.category.href
+                    }
+                };
+            }
+
 
             var createNewTemplate = function() {
                 return ROService

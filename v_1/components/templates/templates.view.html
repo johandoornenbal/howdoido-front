@@ -5,7 +5,7 @@
 ******************************************************************************************************-->
     <div ng-hide="vm.editing || vm.deleting">
         <h3>Create new template (questions form)</h3>
-        <button ng-click="vm.createTemplate = true" class="btn btn-primary" ng-hide="vm.createTemplate">New template</button>
+        <button ng-click="vm.createTemplate = true; vm.newTemplate.category = null; vm.newTemplate.subCategory = null;" class="btn btn-primary" ng-hide="vm.createTemplate">New template</button>
         <form name="newTemplateForm" ng-show=vm.createTemplate novalidate>
             <div layout="row">
                 <div flex='100'>
@@ -15,16 +15,33 @@
                     </md-input-container>
                 </div>
             </div>
+            <!--(TOP)CATEGORY-->
             <div layout="row">
                 <div flex='100'>
                     <md-input-container style="margin-right: 0px;">
                         <label>Choose topcategory</label>
-                        <md-select ng-model="vm.newTemplate.category" required>
-                            <md-option ng-repeat="category in vm.allTopCategories" value="{{category.href}}">{{category.title}}</md-option>
+                        <md-select ng-model="vm.newTemplate.category" md-on-close="vm.newSubCategories(vm.newTemplate.category.href);" required>
+                            <md-option ng-repeat="category in vm.allTopCategories" ng-value="category">{{category.title}}</md-option>
                         </md-select>
                     </md-input-container>
                 </div>
             </div>
+            <!--END (TOP)CATEGORY END-->
+            <!--OPTIONAL SUBCATEGORY-->
+            <div layout="row" ng-show="vm.newTemplate.category!=null">
+                <div flex='100'>
+                    <label>Sub Category</label>
+                    <md-autocomplete md-selected-item="vm.newTemplate.subCategory" md-search-text="searchText" md-items="subCategory in vm.newSubCategoriesList" md-item-text="subCategory.title" placeholder="Select a sub category if you wish (start typing)">
+                        <md-item-template>
+                            <span md-highlight-text="searchText">{{subCategory.title}}</span>
+                        </md-item-template>
+                        <md-not-found>
+                            No matches found.
+                        </md-not-found>
+                    </md-autocomplete>
+                </div>
+            </div>
+            <!--END OPTIONAL SUBCATEGORY END-->
             <div ng-repeat="number in vm.numberOfNewQuestions">
                 <div layout="row">
                     <div flex='100'>
@@ -56,10 +73,10 @@
             </div>
             <div layout="row">
                 <div flex='50'>
-                    <md-input-container style="margin-right: 0px; margin-top: 5px;" ng-hide="vm.newTemplate.name.length > 3 && vm.newTemplate.category.length > 2">
+                    <md-input-container style="margin-right: 0px; margin-top: 5px;" ng-hide="vm.newTemplate.name.length > 3 && vm.newTemplate.category.href.length > 2">
                         <input type="submit" class="btn btn-primary" value="submit" disabled>
                     </md-input-container>
-                    <md-input-container style="margin-right: 0px; margin-top: 5px;" ng-show="vm.newTemplate.name.length > 3 && vm.newTemplate.category.length > 2">
+                    <md-input-container style="margin-right: 0px; margin-top: 5px;" ng-show="vm.newTemplate.name.length > 3 && vm.newTemplate.category.href.length > 2">
                         <input ng-click="vm.submitNewTemplateForm()" class="btn btn-primary" type="submit" value="submit">
                     </md-input-container>
                 </div>
@@ -70,7 +87,7 @@
                 </div>
             </div>
         </form>
-        <!--    <hr /> {{vm.newTemplate}}-->
+<!--            <hr /> {{vm.newTemplate}}-->
     </div>
     <!-- *************************************************************************************************
         EDIT TEMPLATES
@@ -91,7 +108,7 @@
                                 {{template.name}}
                             </div>
                             <div flex='20' ng-hide="template.delete">
-                                <input type="button" ng-click="template.edit = true; vm.editing = true; template.newName = template.name;" name="edit" value="edit" ng-hide="template.edit" class="btn-xs btn-primary">
+                                <input type="button" ng-click="template.edit = true; vm.editing = true; template.newName = template.name; template.currentCategory = template.category; template.newCategory=null;" name="edit" value="edit" ng-hide="template.edit" class="btn-xs btn-primary">
                             </div>
                             <div flex='20' ng-hide="template.edit">
                                 <input type="button" ng-click="template.delete = true; vm.deleting = true;" name="delete" value="delete" ng-hide="template.delete" class="btn-xs btn-danger">
@@ -101,6 +118,7 @@
                                 <input type="button" ng-click="vm.copyTemplate(template.URI)" name="copy" value="copy" class="btn-xs btn-warning" ng-hide="template.delete || template.edit">
                             </div>
                         </div>
+                        <!--TEMPLATE NAME-->
                         <div layout="row" ng-show="template.edit">
                             <div flex='100'>
                                 <md-input-container>
@@ -109,17 +127,35 @@
                                 </md-input-container>
                             </div>
                         </div>
+                        <!--END TEMPLATE NAME END-->
+                        <!--(TOP)CATEGORY-->
                         <div layout="row" ng-show="template.edit">
                             <div flex='100'>
-                                <md-input-container style="margin-right: 0px;">
-                                    <label>Category</label>
-                                    <md-select ng-model="template.newCategory" required>
-                                        <md-option value="" selected>{{template.category}}</md-option>
-                                        <md-option ng-repeat="category in vm.allTopCategories" value="{{category.href}}">{{category.title}}</md-option>
+                                <div ng-hide="template.newCategory!=null">Current Category: {{template.currentCategory}}</div>
+                                <md-input-container>
+                                    <label>Choose top category</label>
+                                    <md-select ng-model="template.newCategory" md-on-close="vm.subCategories(template.newCategory);">
+                                        <md-option ng-repeat="category in vm.allTopCategories" ng-value="category.href">{{category.title}}</md-option>
                                     </md-select>
                                 </md-input-container>
                             </div>
                         </div>
+                        <!--END (TOP)CATEGORY END-->
+                        <!--OPTIONAL SUBCATEGORY-->
+                        <div layout="row" ng-show="template.edit && template.newCategory!=null">
+                            <div flex='100'>
+                                <label>Sub Category</label>
+                                <md-autocomplete md-selected-item="template.newSubCategory" md-search-text="searchText" md-items="subCategory in vm.subCategoriesList" md-item-text="subCategory.title" placeholder="Select a sub category if you wish (start typing)">
+                                    <md-item-template>
+                                        <span md-highlight-text="searchText">{{subCategory.title}}</span>
+                                    </md-item-template>
+                                    <md-not-found>
+                                        No matches found.
+                                    </md-not-found>
+                                </md-autocomplete>
+                            </div>
+                        </div>
+                        <!--END OPTIONAL SUBCATEGORY END-->
 
                         <div ng-repeat="question in template.questions" ng-show="template.edit">
                             <div layout="row" ng-hide="question.delete">
@@ -179,7 +215,7 @@
                                             <md-option value="RATING_WITH_EXPLANATION">RATING_WITH_EXPLANATION</md-option>
                                         </md-select>
                                     </md-input-container>
-                                    <input type="text" ng-model="question.id" name="id" ng-value="question.id" disabled>
+                                    <!--                                    <input type="text" ng-model="question.id" name="id" ng-value="question.id" disabled>-->
                                 </div>
                             </div>
                             <div layout="row">
@@ -195,7 +231,7 @@
                                 <input ng-click="vm.submitTemplatesForm(); vm.editing=false; vm.deleting=false;" type="submit" value="submit changes" class="btn btn-primary">
                             </div>
                             <div flex='50' style="margin-right: 0px; margin-top: 5px; margin-bottom: 5px;">
-                            <input type="button" ng-click="template.edit = false; vm.editing = false;" name="reset" value="reset" ng-show="template.edit" class="btn btn-warning">
+                                <input type="button" ng-click="template.edit = false; vm.editing = false; template.newCategory=null; template.newName='';" name="reset" value="reset" ng-show="template.edit" class="btn btn-warning">
                             </div>
                         </div>
 
