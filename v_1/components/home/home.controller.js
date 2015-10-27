@@ -122,6 +122,10 @@
                 });
 
         }
+        
+        $scope.navigateToNewTemplate = function(){
+            $location.path('/templates/true');
+        }
 
     }
 

@@ -40,8 +40,9 @@
             templateUrl: 'components/feedback/feedback.view.html',
             controllerAs: 'vm'
         })
-
-        .when('/templates', {
+        
+        //param 'new': set 'true' for direct creation of template
+        .when('/templates/:new?', {
             controller: 'TemplatesController',
             templateUrl: 'components/templates/templates.view.html',
             controllerAs: 'vm'

@@ -3,7 +3,7 @@
         <h4>{{vm.user.name}} you are logged in</h4>
     </div>
     <div flex='50'>
-        <p><a href="#/login" class="btn-sm btn-warning">Logout</a></p>
+        <p><a href="#/login" class="btn btn-warning">Logout</a></p>
     </div>
 </div>
 
@@ -63,7 +63,7 @@
             </div>
             <div flex='50'>
                 <div class="form-actions">
-                    <button class="btn btn-primary" ng-disabled="template.URI.length > 0">New template</button>
+                    <button class="btn btn-primary" ng-disabled="template.URI.length > 0" ng-click="navigateToNewTemplate()">New template</button>
                 </div>
             </div>
         </div>
@@ -207,6 +207,3 @@
         <hr />
     </li>
 </ul>
-
-<p>&nbsp;</p>
-<p><a href="#/login" class="btn btn-primary">Logout</a></p>

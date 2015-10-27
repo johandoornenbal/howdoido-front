@@ -32,6 +32,15 @@
         );
 
         initController();
+        
+        
+        //Direct creation of template
+        if($routeParams.new){
+            vm.createTemplate = true; 
+            vm.newTemplate.category = null; 
+            vm.newTemplate.subCategory = null; 
+            vm.newSubCategoriesList = [];
+        }
 
         /****************************************************************************************************************************/
         /****************************************************************************************************************************/
