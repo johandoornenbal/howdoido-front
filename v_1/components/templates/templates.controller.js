@@ -48,6 +48,8 @@
                         function(data) {
                             vm.userdata = data.data.user;
                             $rootScope.globals.currentUser.userdata = data.data.user;
+                            console.log("userdata:");
+                            console.log(vm.userdata);
                         }
                     );
             }
@@ -322,9 +324,9 @@
                                 }
                             }
 
-                            
+
                             updateCategorySuggestion();
-                            
+
 
                             if (template.addQuestion && template.newQuestion.question != "" && template.newQuestion.newFormType != "") {
                                 addQuestion();
@@ -409,9 +411,9 @@
 
                 var href = "";
                 if (payLoad.hasOwnProperty("categorySuggestion")) {
-                    href = "http://localhost:8080/restful/objects/info.matchingservice.dom.Howdoido.BasicUser/0/actions/createTemplateWithCategorySuggestion";
+                    href = vm.userdata.URI + "/actions/createTemplateWithCategorySuggestion";
                 } else {
-                    href = "http://localhost:8080/restful/objects/info.matchingservice.dom.Howdoido.BasicUser/0/actions/createTemplate";
+                    href = vm.userdata.URI + "/actions/createTemplate";
                 }
 
                 return ROService

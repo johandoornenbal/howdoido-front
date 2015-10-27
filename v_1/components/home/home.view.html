@@ -1,39 +1,71 @@
-<h3>Hi {{vm.user.name}}!</h3>
-
-{{vm.test1}}<br />
-{{vm.test2}}<br />
-{{vm.test3}}
+<div layout="row">
+    <div flex='50'>
+        <h4>{{vm.user.name}} you are logged in</h4>
+    </div>
+    <div flex='50'>
+        <p><a href="#/login" class="btn-sm btn-warning">Logout</a></p>
+    </div>
+</div>
 
 <!--*******************ASK FEEDBACK*************************-->
 
 <div ng-controller="FormController">
-    <form name="form" ng-submit="sendRequest(template, user)" role="form" novalidate>
+    <form name="form" role="form" novalidate>
         <div class="md-padding">
             <div>
-                <h1 class="md-title">Ask feedback</h1>
+                <h2 class="md-title">Ask feedback</h2>
                 <div layout="row">
-                    <md-input-container style="margin-right: 0px;">
+                    <div flex='100'>
                         <label>Choose template</label>
-                        <md-select ng-model="template" required>
-                            <md-option ng-repeat="template in vm.templates" value="{{template.URI}}">{{template.name}} - {{template.category}}</md-option>
-                        </md-select>
-                    </md-input-container>
+                        <md-autocomplete md-selected-item="template" md-search-text="searchText" md-items="template in vm.templates" md-item-text="template.name" placeholder="Select a template (start typing)">
+                            <md-item-template>
+                                <span md-highlight-text="templateSearchText">{{template.name}} - {{template.category}}</span>
+                            </md-item-template>
+                            <md-not-found>
+                                No matches found.
+                            </md-not-found>
+                        </md-autocomplete>
+                    </div>
                 </div>
-                <div layout="row">
-                    <md-input-container style="margin-right: 0px;">
+                <div layout="row" ng-hide="email.length > 0">
+                    <div flex='100'>
                         <label>Choose user</label>
-                        <md-select ng-model="user" required>
-                            <md-option ng-repeat="user in vm.allUsers" value="{{user.href}}">{{user.title}}</md-option>
-                        </md-select>
-                    </md-input-container>
+                        <md-autocomplete md-selected-item="user" md-search-text="userSearchText" md-items="user in vm.allUsers" md-item-text="user.title" placeholder="Select a user (start typing)">
+                            <md-item-template>
+                                <span md-highlight-text="userSearchText">{{user.title}}</span>
+                            </md-item-template>
+                            <md-not-found>
+                                No matches found.
+                            </md-not-found>
+                        </md-autocomplete>
+                    </div>
                 </div>
-                <p ng-show="requestSubmitted">SUCCES! Response:</p>
-                <p>{{sendRequestResponse}}</p>
+                <div layout="row" ng-hide="userSearchText.length > 0">
+                    <div flex='100'>
+                        <md-input-container style="margin-right: 0px;">
+                            <label>Or fill in email</label>
+                            <input type="email" ng-model="email" name="email">
+                        </md-input-container>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary" ng-disabled="form.$invalid" ng-hide="requestSubmitted">ASK FEEDBACK</button>
+        <div layout="row">
+            <div flex='33'>
+                <div class="form-actions">
+                    <button class="btn btn-primary" ng-disabled="!template" ng-click="sendRequest(template.URI, user.href)">ASK FEEDBACK</button>
+                </div>
+            </div>
+            <div flex='33'>
+                <div class="form-actions">
+                    <button class="btn btn-primary" ng-disabled="!template || userSearchText.length > 0 || email.length > 0" ng-click="anonymousFeedback(template.URI)">DIRECT FEEDBACK</button>
+                </div>
+            </div>
+            <div flex='50'>
+                <div class="form-actions">
+                    <button class="btn btn-primary" ng-disabled="template.URI.length > 0">New template</button>
+                </div>
+            </div>
         </div>
     </form>
 </div>
@@ -43,7 +75,7 @@
 <p>UNRATED RECEIVED FEEDBACK</p>
 <ul>
     <li ng-repeat="feedback in vm.unratedReceivedFeedback">
-        
+
         <div layout="row">
             <div flex='15'>
                 <button ng-disabled="feedback.formRated" class="btn btn-primary">RATE</button>
