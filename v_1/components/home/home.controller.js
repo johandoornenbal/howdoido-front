@@ -6,6 +6,8 @@
         .controller('HomeController', HomeController)
         .controller('FormController', FormController);
 
+    /////////////// HOMECONTROLLER /////////////////////////////////////////////////////////////////////////////
+    
     HomeController.$inject = ['CurrentUserService', '$rootScope', '$routeParams', '$location', 'ROService'];
 
     function HomeController(CurrentUserService, $rootScope, $routeParams, $location, ROService) {
@@ -23,30 +25,8 @@
         initController();
 
         function initController() {
-            //loadAllUserData();
-//            getUsers();
-        }
-
-//        function loadAllUserData() {
-//            CurrentUserService.GetData()
-//                .then(function(userdata) {
-//                    vm.user = userdata.data.user;
-//                    $rootScope.globals.currentUser.userdata = userdata.data.user;
-//                    vm.templates = userdata.data.user.templates;
-//                    vm.receivedRequests = userdata.data.user.receivedRequests;
-//                    vm.unratedReceivedFeedback = userdata.data.user.unratedReceivedFeedback;
-//                    vm.receivedFeedback = userdata.data.user.receivedFeedback;
-//                });
-//        }
-
-        function getUsers() {
-            ROService.PerformFunction(
-                    'services/Api/actions/allUsers',
-                    '',
-                    'POST')
-                .then(function(userdata) {
-                    vm.allUsers = userdata.data.result.value;
-                });
+            // nothing to initialize yet
+            // FormController sets data for HomeController as well
         }
 
         vm.createFeedbackUrl = function createFeedbackUrl(uri) {
@@ -55,6 +35,8 @@
 
     }
 
+    /////////////// FORMCONTROLLER /////////////////////////////////////////////////////////////////////////////
+    
     FormController.$inject = ['$scope', '$location', 'ROService', '$routeParams', '$rootScope', 'CurrentUserService'];
 
     function FormController($scope, $location, ROService, $routeParams, $rootScope, CurrentUserService) {
@@ -92,6 +74,8 @@
                 });
         }
         
+        /////////////// TEMPLATES /////////////////////////////////////////////////////////////////////////////
+        
         /**
          * Search for templates
          */
@@ -109,6 +93,8 @@
                 return (template.name.replace(/\s/g,'').toLowerCase().indexOf(lowercaseQuery, 0) != -1);
             };
         }
+        
+        /////////////// USERS /////////////////////////////////////////////////////////////////////////////
         
         function getUsers() {
             ROService.PerformFunction(
@@ -139,6 +125,8 @@
             };
         }
         
+        /////////////// SEND FORM /////////////////////////////////////////////////////////////////////////////
+        
         $scope.sendRequest = function sendRequest(templateUri, userHref) {
 
             var payLoad = {
@@ -167,6 +155,8 @@
 
         }
 
+        /////////////// NAVIGATION /////////////////////////////////////////////////////////////////////////////
+        
         $scope.navigateToNewTemplate = function() {
             $location.path('/templates/true');
         }
