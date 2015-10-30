@@ -90,7 +90,8 @@
         function createFilterFor(query) {
             var lowercaseQuery = angular.lowercase(query).replace(/\s/g,'');
             return function filterFn(template) {
-                return (template.name.replace(/\s/g,'').toLowerCase().indexOf(lowercaseQuery, 0) != -1);
+                return (template.name.replace(/\s/g,'').toLowerCase().indexOf(lowercaseQuery, 0) != -1 || 
+                       template.category.replace(/\s/g,'').toLowerCase().indexOf(lowercaseQuery, 0) != -1);
             };
         }
         

@@ -13,8 +13,36 @@
         vm.questions = [];
         vm.answers = [];
         vm.id = $routeParams.feedbackUrl.replace("L_", "");
+        vm.ratingFromSlider = ratingFromSlider;
 
         initController();
+
+        function ratingFromSlider(question, integer) {
+            switch (integer) {
+                case 1:
+                    question.ratinginput =  "BAD";
+                    break;
+
+                case 2:
+                    question.ratinginput = "POOR";
+                    break;
+
+                case 3:
+                    question.ratinginput = "AVERAGE";
+                    break;
+
+                case 4:
+                    question.ratinginput = "GOOD";
+                    break;
+
+                case 5:
+                    question.ratinginput = "EXCELLENT";
+                    break;
+                    
+                default:
+                    question.ratinginput = "ERROR";
+            };
+        }
 
         /****************************************************************************************************************************/
         /****************************************************************************************************************************/
@@ -35,7 +63,7 @@
             Refactoring Step1 and step2 below
         */
         function getQuestionsFromRequest() {
-            
+
             var getTemplateLinkFromRequest = function(requestURI) {
                 return ROService
                     .GetRO(requestURI) // request 1 returns reference to template
@@ -61,7 +89,7 @@
                         }
                     );
             };
-            
+
             var getQuestionLinksFromQuestionCollection = function(collectionLink) {
                 return ROService
                     .GetCollection(collectionLink)
@@ -103,7 +131,7 @@
                     });
             };
 
-            
+
             getTemplateLinkFromRequest("objects/info.matchingservice.dom.Howdoido.BasicRequest/" + vm.id)
                 .then(getQuestionCollectionLinkFromTemplate)
                 .then(getQuestionLinksFromQuestionCollection)
@@ -210,12 +238,12 @@
                                                 if (entry.title == question.questionId) {
 
                                                     updateRating(entry.href, question.ratinginput);
-                                                    
+
                                                     //check if explanation is asked for
                                                     if (question.explanation) {
-                                                        
+
                                                         updateExplanation(entry.href, question.explanationinput);
-                                                        
+
                                                     }
 
                                                 }

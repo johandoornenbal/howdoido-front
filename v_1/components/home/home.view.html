@@ -16,8 +16,8 @@
                 <h2 class="md-title">Ask feedback</h2>
                 <div layout="row">
                     <div flex='100'>
-                        <label>Choose template</label>
-                        <md-autocomplete md-selected-item="ctrl.template" md-search-text="ctrl.templateSearchText" md-items="template in ctrl.querySearchTemplate(ctrl.templateSearchText)" md-item-text="template.name + ' - ' + template.category" placeholder="Select a template" md-min-length="0">
+<!--                        <label>Choose template</label>-->
+                        <md-autocomplete md-selected-item="ctrl.template" md-search-text="ctrl.templateSearchText" md-items="template in ctrl.querySearchTemplate(ctrl.templateSearchText)" md-item-text="template.name + ' - ' + template.category" placeholder="Select a template" md-min-length="0" md-floating-label="Choose template">
                             <md-item-template>
                                 <span md-highlight-text="ctrl.templateSearchText">{{template.name}} - {{template.category}}</span>
                             </md-item-template>
@@ -29,8 +29,8 @@
                 </div>
                 <div layout="row" ng-hide="email.length > 0">
                     <div flex='100'>
-                        <label>Choose user</label>
-                        <md-autocomplete md-selected-item="ctrl.user" md-search-text="ctrl.userSearchText" md-items="user in ctrl.querySearchUser(ctrl.userSearchText)" md-item-text="user.title" placeholder="Select a user" md-min-length="0">
+<!--                        <label>Choose user</label>-->
+                        <md-autocomplete md-selected-item="ctrl.user" md-search-text="ctrl.userSearchText" md-items="user in ctrl.querySearchUser(ctrl.userSearchText)" md-item-text="user.title" placeholder="Select a user" md-min-length="1" md-floating-label="Choose user">
                             <md-item-template>
                                 <span md-highlight-text="ctrl.userSearchText">{{user.title}}</span>
                             </md-item-template>
@@ -44,7 +44,7 @@
                     <div flex='100'>
                         <md-input-container style="margin-right: 0px;">
                             <label>Or fill in email</label>
-                            <input type="email" ng-model="email" name="email">
+                            <input type="text" ng-model="email" name="email">
                         </md-input-container>
                     </div>
                 </div>
