@@ -6,9 +6,9 @@
         .controller('HomeController', HomeController)
         .controller('FormController', FormController);
 
-    HomeController.$inject = ['CurrentUserService', '$rootScope', '$q', '$location', 'ROService'];
+    HomeController.$inject = ['CurrentUserService', '$rootScope', '$routeParams', '$location', 'ROService'];
 
-    function HomeController(CurrentUserService, $rootScope, $q, $location, ROService) {
+    function HomeController(CurrentUserService, $rootScope, $routeParams, $location, ROService) {
         var vm = this;
         vm.user = null;
         vm.templates = [];
@@ -19,58 +19,26 @@
         vm.sendRequestResponse = null;
         vm.receivedFeedback = [];
         vm.unratedReceivedFeedback = [];
-//        vm.test1 = null;
-//        vm.test2 = [];
-//        vm.test3 = {};
 
         initController();
 
         function initController() {
-            loadAllUserData();
-            getUsers();
-//            test("objects/info.matchingservice.dom.Howdoido.BasicUser/0");
+            //loadAllUserData();
+//            getUsers();
         }
 
-        /* Example of ROService use */
-        function test(href) {
+//        function loadAllUserData() {
+//            CurrentUserService.GetData()
+//                .then(function(userdata) {
+//                    vm.user = userdata.data.user;
+//                    $rootScope.globals.currentUser.userdata = userdata.data.user;
+//                    vm.templates = userdata.data.user.templates;
+//                    vm.receivedRequests = userdata.data.user.receivedRequests;
+//                    vm.unratedReceivedFeedback = userdata.data.user.unratedReceivedFeedback;
+//                    vm.receivedFeedback = userdata.data.user.receivedFeedback;
+//                });
+//        }
 
-            var test3 = function test3(href) {
-                return ROService.GetRO(href).then(
-                    function(data) {
-                        vm.test3 = data;
-                        return data;
-                    }
-                );
-            }
-
-            var getCollection = function getCollection(data) {
-                return ROService.GetCollection(data.myTemplates.href)
-                    .then(
-                        function(data) {
-                            vm.test2 = data;
-                            return data;
-                        }
-                    );
-            }
-            
-            test3(href).then(getCollection);
-            
-        }
-        /* END Example of ROService use */
-
-        function loadAllUserData() {
-            CurrentUserService.GetData()
-                .then(function(userdata) {
-                    vm.user = userdata.data.user;
-                    // update $rootScope.globals.currentUser
-                    $rootScope.globals.currentUser.userdata = userdata.data.user;
-                    vm.templates = userdata.data.user.templates;
-                    vm.receivedRequests = userdata.data.user.receivedRequests;
-                    vm.unratedReceivedFeedback = userdata.data.user.unratedReceivedFeedback;
-                    vm.receivedFeedback = userdata.data.user.receivedFeedback;
-                });
-        }
-        
         function getUsers() {
             ROService.PerformFunction(
                     'services/Api/actions/allUsers',
@@ -87,14 +55,90 @@
 
     }
 
-    FormController.$inject = ['$scope', '$location', 'ROService'];
+    FormController.$inject = ['$scope', '$location', 'ROService', '$routeParams', '$rootScope', 'CurrentUserService'];
 
-    function FormController($scope, $location, ROService) {
+    function FormController($scope, $location, ROService, $routeParams, $rootScope, CurrentUserService) {
+        
+        var self=this;
+        self.allTemplates = [];
+        self.allUsers = [];
+        self.querySearchTemplate = querySearchTemplate;
+        self.querySearchUser = querySearchUser;
+        
+        loadAllUserData();
+        getUsers();
+        
+        if ($routeParams.templateId) {
+            $scope.template = $routeParams.templateId;
+            //TODO: function getTemplateById and then
+            //$scope.template = getTemplateById($routeParams.templateId);
+            console.log($scope.template);
+        }
 
         $scope.send = function sendFeedbackRequest() {
             $location.path('/request');
         }
+        
+        function loadAllUserData() {
+            CurrentUserService.GetData()
+                .then(function(userdata) {
+                    self.allTemplates = userdata.data.user.templates;
+                    $scope.$parent.vm.user = userdata.data.user;
+                    $rootScope.globals.currentUser.userdata = userdata.data.user;
+                    $scope.$parent.vm.templates = userdata.data.user.templates;
+                    $scope.$parent.vm.receivedRequests = userdata.data.user.receivedRequests;
+                    $scope.$parent.vm.unratedReceivedFeedback = userdata.data.user.unratedReceivedFeedback;
+                    $scope.$parent.vm.receivedFeedback = userdata.data.user.receivedFeedback;
+                });
+        }
+        
+        /**
+         * Search for templates
+         */
+        function querySearchTemplate(query) {
+            var results = query ? self.allTemplates.filter(createFilterFor(query)) : self.allTemplates;
+            return results;
+        }
 
+        /**
+         * Create filter function for a query string: spaces and case insensitive!!
+         */
+        function createFilterFor(query) {
+            var lowercaseQuery = angular.lowercase(query).replace(/\s/g,'');
+            return function filterFn(template) {
+                return (template.name.replace(/\s/g,'').toLowerCase().indexOf(lowercaseQuery, 0) != -1);
+            };
+        }
+        
+        function getUsers() {
+            ROService.PerformFunction(
+                    'services/Api/actions/allUsers',
+                    '',
+                    'POST')
+                .then(function(userdata) {
+                    self.allUsers = userdata.data.result.value;
+                });
+        }
+
+        
+        /**
+         * Search for users
+         */
+        function querySearchUser(query) {
+            var results = query ? self.allUsers.filter(createFilterForUser(query)) : self.allUsers;
+            return results;
+        }
+
+        /**
+         * Create filter function for a query string: spaces and case insensitive!!
+         */
+        function createFilterForUser(query) {
+            var lowercaseQuery = angular.lowercase(query).replace(/\s/g,'');
+            return function filterFn(user) {
+                return (user.title.replace(/\s/g,'').toLowerCase().indexOf(lowercaseQuery, 0) != -1);
+            };
+        }
+        
         $scope.sendRequest = function sendRequest(templateUri, userHref) {
 
             var payLoad = {
@@ -122,8 +166,8 @@
                 });
 
         }
-        
-        $scope.navigateToNewTemplate = function(){
+
+        $scope.navigateToNewTemplate = function() {
             $location.path('/templates/true');
         }
 

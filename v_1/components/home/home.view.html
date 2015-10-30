@@ -9,7 +9,7 @@
 
 <!--*******************ASK FEEDBACK*************************-->
 
-<div ng-controller="FormController">
+<div ng-controller="FormController as ctrl">
     <form name="form" role="form" novalidate>
         <div class="md-padding">
             <div>
@@ -17,9 +17,9 @@
                 <div layout="row">
                     <div flex='100'>
                         <label>Choose template</label>
-                        <md-autocomplete md-selected-item="template" md-search-text="searchText" md-items="template in vm.templates" md-item-text="template.name" placeholder="Select a template (start typing)">
+                        <md-autocomplete md-selected-item="ctrl.template" md-search-text="ctrl.templateSearchText" md-items="template in ctrl.querySearchTemplate(ctrl.templateSearchText)" md-item-text="template.name + ' - ' + template.category" placeholder="Select a template" md-min-length="0">
                             <md-item-template>
-                                <span md-highlight-text="templateSearchText">{{template.name}} - {{template.category}}</span>
+                                <span md-highlight-text="ctrl.templateSearchText">{{template.name}} - {{template.category}}</span>
                             </md-item-template>
                             <md-not-found>
                                 No matches found.
@@ -30,9 +30,9 @@
                 <div layout="row" ng-hide="email.length > 0">
                     <div flex='100'>
                         <label>Choose user</label>
-                        <md-autocomplete md-selected-item="user" md-search-text="userSearchText" md-items="user in vm.allUsers" md-item-text="user.title" placeholder="Select a user (start typing)">
+                        <md-autocomplete md-selected-item="ctrl.user" md-search-text="ctrl.userSearchText" md-items="user in ctrl.querySearchUser(ctrl.userSearchText)" md-item-text="user.title" placeholder="Select a user" md-min-length="0">
                             <md-item-template>
-                                <span md-highlight-text="userSearchText">{{user.title}}</span>
+                                <span md-highlight-text="ctrl.userSearchText">{{user.title}}</span>
                             </md-item-template>
                             <md-not-found>
                                 No matches found.
@@ -40,7 +40,7 @@
                         </md-autocomplete>
                     </div>
                 </div>
-                <div layout="row" ng-hide="userSearchText.length > 0">
+                <div layout="row" ng-hide="ctrl.userSearchText.length > 0">
                     <div flex='100'>
                         <md-input-container style="margin-right: 0px;">
                             <label>Or fill in email</label>
@@ -53,17 +53,17 @@
         <div layout="row">
             <div flex='33'>
                 <div class="form-actions">
-                    <button class="btn btn-primary" ng-disabled="!template" ng-click="sendRequest(template.URI, user.href)">ASK FEEDBACK</button>
+                    <button class="btn btn-primary" ng-disabled="!ctrl.template" ng-click="sendRequest(ctrl.template.URI, ctrl.user.href)">ASK FEEDBACK</button>
                 </div>
             </div>
             <div flex='33'>
                 <div class="form-actions">
-                    <button class="btn btn-primary" ng-disabled="!template || userSearchText.length > 0 || email.length > 0" ng-click="anonymousFeedback(template.URI)">DIRECT FEEDBACK</button>
+                    <button class="btn btn-primary" ng-disabled="!ctrl.template || ctrl.userSearchText.length > 0 || email.length > 0" ng-click="anonymousFeedback(ctrl.template.URI)">DIRECT FEEDBACK</button>
                 </div>
             </div>
             <div flex='50'>
                 <div class="form-actions">
-                    <button class="btn btn-primary" ng-disabled="template.URI.length > 0" ng-click="navigateToNewTemplate()">New template</button>
+                    <button class="btn btn-primary" ng-disabled="ctrl.template.URI.length > 0" ng-click="navigateToNewTemplate()">New template</button>
                 </div>
             </div>
         </div>

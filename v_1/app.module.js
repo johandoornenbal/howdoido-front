@@ -11,7 +11,13 @@
     function config($routeProvider, $locationProvider) {
         $routeProvider
 
-            .when('/', {
+        .when('/', {
+            controller: 'HomeController',
+            templateUrl: 'components/home/home.view.html',
+            controllerAs: 'vm'
+        })
+        
+        .when('/tpl/:templateId?', {
             controller: 'HomeController',
             templateUrl: 'components/home/home.view.html',
             controllerAs: 'vm'
@@ -40,7 +46,7 @@
             templateUrl: 'components/feedback/feedback.view.html',
             controllerAs: 'vm'
         })
-        
+
         //param 'new': set 'true' for direct creation of template
         .when('/templates/:new?', {
             controller: 'TemplatesController',
@@ -64,11 +70,11 @@
         if ($rootScope.globals.currentUser) {
             $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
             //test voor CORS om te zien of 'PUT' probleem kan worden opgelost...
-//            $http.defaults.useXDomain = true;
-//            $http.defaults.withCredentials = true;
-//            delete $http.defaults.headers.common["X-Requested-With"];
-//            $http.defaults.headers.common["Accept"] = "application/json";
-//            $http.defaults.headers.common["Content-Type"] = "application/json";
+            //            $http.defaults.useXDomain = true;
+            //            $http.defaults.withCredentials = true;
+            //            delete $http.defaults.headers.common["X-Requested-With"];
+            //            $http.defaults.headers.common["Accept"] = "application/json";
+            //            $http.defaults.headers.common["Content-Type"] = "application/json";
         }
 
         $rootScope.$on('$locationChangeStart', function(event, next, current) {
