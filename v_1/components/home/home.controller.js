@@ -37,9 +37,9 @@
 
     /////////////// FORMCONTROLLER /////////////////////////////////////////////////////////////////////////////
 
-    FormController.$inject = ['$scope', '$location', 'ROService', '$routeParams', '$rootScope', 'CurrentUserService'];
+    FormController.$inject = ['$scope', '$location', 'ROService', '$routeParams', '$rootScope', 'CurrentUserService', '$mdDialog', '$mdToast'];
 
-    function FormController($scope, $location, ROService, $routeParams, $rootScope, CurrentUserService) {
+    function FormController($scope, $location, ROService, $routeParams, $rootScope, CurrentUserService, $mdDialog, $mdToast) {
 
         var self = this;
         self.allTemplates = [];
@@ -132,13 +132,22 @@
 
         /////////////// SEND FORM /////////////////////////////////////////////////////////////////////////////
 
-        $scope.sendRequest = function sendRequest(templateUri, userHref) {
+        $scope.sendRequest = function sendRequest(templateUri, userHref, email) {
 
-            var payLoad = {
-                "orFindExistingUser": {
-                    "href": userHref
-                }
-            };
+            if (userHref) {
+                console.log("href found");
+                var payLoad = {
+                    "orFindExistingUser": {
+                        "href": userHref
+                    }
+                };
+            }
+            if (email) {
+                console.log("email found");
+                var payLoad = {
+                    "typeInNameOrEmailAddress": email
+                };
+            }
             $scope.requestSubmitted = function() {
                 return false;
             };
@@ -150,11 +159,28 @@
                 .then(function(userdata) {
                     if (userdata.data != null) {
                         $scope.sendRequestResponse = userdata.data.result.members.OID.value;
+                        var toast = $mdToast.simple()
+                            .content('Request submitted.');
+                        $mdToast.show(toast);
                         $scope.requestSubmitted = function() {
                             return true;
                         };
+                        setTimeout(function(){ location.href = ''; }, 3000);
                     } else {
-                        $scope.sendRequestResponse = "Sorry... ERROR sending request";
+                        $scope.sendRequestResponseError = "ERROR";
+                        var toast = $mdToast.simple()
+                            .content('Ooops! Something went wrong. Please check email address and try again')
+                            .action('OK')
+                            .highlightAction(false);
+                        $mdToast.show(toast).then(function(response) {
+                            if (response == 'ok') {
+                                location.href = '';
+                            }
+                        });
+                        $scope.requestSubmitted = function() {
+                            return true;
+                        };
+                        setTimeout(function(){ location.href = ''; }, 3000);
                     }
                 });
 
@@ -166,7 +192,10 @@
             $location.path('/templates/true');
         }
 
-    }
+        $scope.goHome = function() {
+            $location.path('/');
+        }
 
+    }
 
 })();

@@ -11,59 +11,73 @@
 
 <div ng-controller="FormController as ctrl">
     <form name="form" role="form" novalidate>
-        <div class="md-padding">
-            <div>
-                <h2 class="md-title">Ask feedback</h2>
-                <div layout="row">
-                    <div flex='100'>
-<!--                        <label>Choose template</label>-->
-                        <md-autocomplete md-selected-item="ctrl.template" md-search-text="ctrl.templateSearchText" md-items="template in ctrl.querySearchTemplate(ctrl.templateSearchText)" md-item-text="template.name + ' - ' + template.category" placeholder="Select a template" md-min-length="0" md-floating-label="Choose template">
-                            <md-item-template>
-                                <span md-highlight-text="ctrl.templateSearchText">{{template.name}} - {{template.category}}</span>
-                            </md-item-template>
-                            <md-not-found>
-                                No matches found.
-                            </md-not-found>
-                        </md-autocomplete>
+        <div ng-hide="requestSubmitted()">
+            <div class="md-padding">
+                <div>
+                    <h2 class="md-title">Ask feedback</h2>
+                    <div layout="row">
+                        <div flex='100'>
+                            <!--                        <label>Choose template</label>-->
+                            <md-autocomplete md-selected-item="ctrl.template" md-search-text="ctrl.templateSearchText" md-items="template in ctrl.querySearchTemplate(ctrl.templateSearchText)" md-item-text="template.name + ' - ' + template.category" placeholder="Select a template" md-min-length="0" md-floating-label="Choose template">
+                                <md-item-template>
+                                    <span md-highlight-text="ctrl.templateSearchText">{{template.name}} - {{template.category}}</span>
+                                </md-item-template>
+                                <md-not-found>
+                                    No matches found.
+                                </md-not-found>
+                            </md-autocomplete>
+                        </div>
+                    </div>
+                    <div layout="row" ng-hide="email.length > 0">
+                        <div flex='100'>
+                            <!--                        <label>Choose user</label>-->
+                            <md-autocomplete md-selected-item="ctrl.user" md-search-text="ctrl.userSearchText" md-items="user in ctrl.querySearchUser(ctrl.userSearchText)" md-item-text="user.title" placeholder="Select a user" md-min-length="1" md-floating-label="Choose user">
+                                <md-item-template>
+                                    <span md-highlight-text="ctrl.userSearchText">{{user.title}}</span>
+                                </md-item-template>
+                                <md-not-found>
+                                    No matches found.
+                                </md-not-found>
+                            </md-autocomplete>
+                        </div>
+                    </div>
+                    <div layout="row" ng-hide="ctrl.userSearchText.length > 0">
+                        <div flex='100'>
+                            <md-input-container style="margin-right: 0px;">
+                                <label>Or fill in email</label>
+                                <input type="text" ng-model="ctrl.email" name="email">
+                            </md-input-container>
+                        </div>
                     </div>
                 </div>
-                <div layout="row" ng-hide="email.length > 0">
-                    <div flex='100'>
-<!--                        <label>Choose user</label>-->
-                        <md-autocomplete md-selected-item="ctrl.user" md-search-text="ctrl.userSearchText" md-items="user in ctrl.querySearchUser(ctrl.userSearchText)" md-item-text="user.title" placeholder="Select a user" md-min-length="1" md-floating-label="Choose user">
-                            <md-item-template>
-                                <span md-highlight-text="ctrl.userSearchText">{{user.title}}</span>
-                            </md-item-template>
-                            <md-not-found>
-                                No matches found.
-                            </md-not-found>
-                        </md-autocomplete>
+            </div>
+            <div layout="row">
+                <div flex='33'>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" ng-disabled="!ctrl.template || (!ctrl.user && !ctrl.email)" ng-click="sendRequest(ctrl.template.URI, ctrl.user.href, ctrl.email)">ASK FEEDBACK</button>
                     </div>
                 </div>
-                <div layout="row" ng-hide="ctrl.userSearchText.length > 0">
-                    <div flex='100'>
-                        <md-input-container style="margin-right: 0px;">
-                            <label>Or fill in email</label>
-                            <input type="text" ng-model="email" name="email">
-                        </md-input-container>
+                <div flex='33'>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" ng-disabled="!ctrl.template || ctrl.userSearchText.length > 0 || ctrl.email.length > 0" ng-click="anonymousFeedback(ctrl.template.URI)">DIRECT FEEDBACK</button>
+                    </div>
+                </div>
+                <div flex='50'>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" ng-disabled="ctrl.template.URI.length > 0" ng-click="navigateToNewTemplate()">New template</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div layout="row">
-            <div flex='33'>
-                <div class="form-actions">
-                    <button class="btn btn-primary" ng-disabled="!ctrl.template" ng-click="sendRequest(ctrl.template.URI, ctrl.user.href)">ASK FEEDBACK</button>
+        <div ng-show="requestSubmitted()" layout="row">
+            <div flex='100'>
+                <div ng-if="sendRequestResponse.length > 0">
+                    <p>Request submitted.</p>
+                    <button class="btn btn-primary" onclick="location.href = ''">Proceed</button>
                 </div>
-            </div>
-            <div flex='33'>
-                <div class="form-actions">
-                    <button class="btn btn-primary" ng-disabled="!ctrl.template || ctrl.userSearchText.length > 0 || email.length > 0" ng-click="anonymousFeedback(ctrl.template.URI)">DIRECT FEEDBACK</button>
-                </div>
-            </div>
-            <div flex='50'>
-                <div class="form-actions">
-                    <button class="btn btn-primary" ng-disabled="ctrl.template.URI.length > 0" ng-click="navigateToNewTemplate()">New template</button>
+                <div ng-if="sendRequestResponseError.length > 0">
+                    <p>Error submitting request. Please try again.</p>
+                    <button class="btn btn-primary" onclick="location.href = ''">Try again</button>
                 </div>
             </div>
         </div>
