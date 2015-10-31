@@ -14,13 +14,24 @@
         vm.answers = [];
         vm.id = $routeParams.feedbackUrl.replace("L_", "");
         vm.ratingFromSlider = ratingFromSlider;
-
+        vm.disableSubmit = disableSubmit;
+        vm.formSend = false;
+        vm.goHome = goHome;
+        
+        
+        /******* Navigation ****************************************************************************************/
+        function goHome(){
+            $location.path("/");
+        }
+        
         initController();
 
-        function ratingFromSlider(question, integer) {
-            switch (integer) {
+        /******* UI helpers ****************************************************************************************/
+
+        function ratingFromSlider(question) {
+            switch (question.sliderinput) {
                 case 1:
-                    question.ratinginput =  "BAD";
+                    question.ratinginput = "BAD";
                     break;
 
                 case 2:
@@ -38,12 +49,27 @@
                 case 5:
                     question.ratinginput = "EXCELLENT";
                     break;
-                    
+
                 default:
                     question.ratinginput = "ERROR";
             };
         }
-
+        
+        function disableSubmit(){
+            var disable = false;
+            vm.questions.forEach(
+                function(question){
+                    if (!question.ratinginput){
+                        disable = true;
+                    }
+                    if (question.explanation && !question.explanationinput) {
+                        disable = true;
+                    }
+                }
+            );
+            return disable;
+        }
+        
         /****************************************************************************************************************************/
         /****************************************************************************************************************************/
         /****************************************************************************************************************************/
@@ -183,7 +209,7 @@
                     );
             };
 
-            var updateRating = function(linkToAnswer, rate) {
+            var updateRating = function(linkToAnswer, rate, questionTitle) {
                 var link = linkToAnswer + "/actions/updateRating/invoke"
                 var payLoad = {
                         "rating": {
@@ -198,12 +224,17 @@
                             console.log(data.data);
                             var result = data.data.result.members.rating.value;
                             console.log(data.data.result.members.rating.value);
+                            vm.results.push(result);
                             return result;
+                        },
+                        function(error) {
+                            var error = "Error in rating of question " + questionTitle;
+                            vm.results.push(error);
                         }
                     );
             };
 
-            var updateExplanation = function(linkToAnswer, explanation) {
+            var updateExplanation = function(linkToAnswer, explanation, questionTitle) {
                 var link = linkToAnswer + "/actions/updateExplanation/invoke"
                 var payLoad = {
                         "explanation": {
@@ -218,11 +249,21 @@
                             console.log(data.data);
                             var result = data.data.result.members.explanation.value;
                             console.log(result);
+                            vm.results.push(result);
                             return result;
+                        },
+                        function(error) {
+                            var msg = "Error in explanation of question " + questionTitle;
+                            var error = {
+                                error : true,
+                                errorMsg : msg
+                            };
+                            vm.results.push(error);
                         }
                     );
             };
 
+            vm.results = [];
             createFeedback("objects/info.matchingservice.dom.Howdoido.BasicRequest/" + vm.id)
                 .then(getAnswers)
                 .then(
@@ -237,12 +278,12 @@
                                                 //get the right question
                                                 if (entry.title == question.questionId) {
 
-                                                    updateRating(entry.href, question.ratinginput);
+                                                    updateRating(entry.href, question.ratinginput, entry.title);
 
                                                     //check if explanation is asked for
-                                                    if (question.explanation) {
+                                                    if (question.explanationinput) {
 
-                                                        updateExplanation(entry.href, question.explanationinput);
+                                                        updateExplanation(entry.href, question.explanationinput, entry.title);
 
                                                     }
 
@@ -252,8 +293,13 @@
                                 }
                             );
                     }
-                );
+                )
+            .then(
+                function(){
+                    vm.formSend = true;
+                }
+            );
         }
     }
-
+    
 })();

@@ -1,46 +1,67 @@
-<div class="col-md-6 col-md-offset-3">
+<div class="">
     <h2>Give Feedback</h2>
     <p>QUESTIONS TO ANSWER</p>
     <ul>
-        <form ng-submit="vm.submitFeedbackFormForRatingExplanation()" name="feedbackForm">
-            <li ng-repeat="question in vm.questions">
+        <form name="feedbackForm">
 
+            <!-- PART TO SHOW BEFORE FORM IS SEND-->
+            <div ng-show="!vm.formSend">
+                <li ng-repeat="question in vm.questions">
+
+                    <div layout="row">
+                        <div flex='100'>
+                            {{question.number}} - {{question.question}}
+                        </div>
+                    </div>
+                    <div layout="row">
+                        <div flex='100'>
+                            <md-input-container>
+                                <h4 ng-hide="question.sliderinput">Give rating</h4>
+                                <h4 ng-show="question.sliderinput">{{question.ratinginput}}</h4>
+                            </md-input-container>
+                            <md-input-container>
+                                <md-slider flex md-discrete ng-model="question.sliderinput" step="1" min="1" max="5" aria-label="rating" class="md-primary" required ng-change="vm.ratingFromSlider(question)">
+                                </md-slider>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div layout="row" ng-show="question.explanation">
+                        <div flex='100'>
+                            <md-input-container>
+                                <label>Explanation</label>
+                                <input type="text" ng-model="question.explanationinput" name="explanationinput" md-maxlength="200">
+                            </md-input-container>
+                        </div>
+                    </div>
+                </li>
                 <div layout="row">
                     <div flex='100'>
-                        {{question.number}} - {{question.question}}
+                        <input type="submit" value="Submit Form" class="btn btn-primary" ng-disabled="vm.disableSubmit()" ng-click="vm.submitFeedbackFormForRatingExplanation()">
                     </div>
-                </div>
-                <div layout="row">
-                    <div flex='100'>
-                        <md-input-container>
-                            <h4 ng-hide="question.sliderinput">Give rating</h4>
-                            <h4 ng-show="question.sliderinput">{{question.ratinginput}}</h4>
-                            <input type="hidden" ng-model="vm.ratingFromSlider(question, question.sliderinput)" name="ratinginput" required>
-                        </md-input-container>
-                        <md-input-container>
-                            <md-slider flex md-discrete ng-model="question.sliderinput" step="1" min="1" max="5" aria-label="rating" class="md-primary" required>
-                            </md-slider>
-                        </md-input-container>
-                    </div>
-                </div>
-                <div layout="row" ng-show="question.explanation">
-                    <div flex='100'>
-                        <md-input-container>
-                            <label>Explanation</label>
-                            <input type="text" ng-model="question.explanationinput" name="explanationinput" md-maxlength="200">
-                        </md-input-container>
-                    </div>
-                </div>
-            </li>
-            <div layout="row">
-                <div flex='100'>
-                    <input type="submit" value="Submit Form">
                 </div>
             </div>
+            <!--END PART TO SHOW BEFORE FORM IS SEND END-->
+
+            <!-- PART TO SHOW WHEN FORM IS SEND-->
+            <div class="" ng-show="vm.formSend">
+                <h4>Sent feedback:</h4>
+                <ul ng-repeat="result in vm.results">
+                    <li>
+                        <p>{{result}}</p>
+                    </li>
+                </ul>
+                <p>
+                    <button class="btn btn-primary" ng-click="vm.goHome()">HOME</button>
+                </p>
+            </div>
+            <!--   END PART TO SHOW WHEN FORM IS SEND END-->
         </form>
         <div layout="row">
             <div flex='100'>
-                {{vm.questions}}
+                <!--
+                                {{vm.questions}}
+                                {{vm.results}}
+-->
             </div>
         </div>
     </ul>

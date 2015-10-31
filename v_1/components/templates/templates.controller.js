@@ -23,6 +23,7 @@
             vm.subCategoriesList = [];
             vm.newSubCategoriesList = [];
         }
+        vm.sendRequest = sendRequest;
 
         allTopCategories().then(
             function(data) {
@@ -32,13 +33,13 @@
         );
 
         initController();
-        
-        
+
+
         //Direct creation of template
-        if($routeParams.new){
-            vm.createTemplate = true; 
-            vm.newTemplate.category = null; 
-            vm.newTemplate.subCategory = null; 
+        if ($routeParams.new) {
+            vm.createTemplate = true;
+            vm.newTemplate.category = null;
+            vm.newTemplate.subCategory = null;
             vm.newSubCategoriesList = [];
         }
 
@@ -391,104 +392,110 @@
             /****************************************************************************************************************************/
 
         vm.submitNewTemplateForm = function submitNewTemplateForm() {
-            console.log("submitNewTemplateForm: ");
+                console.log("submitNewTemplateForm: ");
 
-            //Prepare function vars
-            if (vm.newTemplate.subCategory != null) {
-                var payLoad = {
-                    "name": vm.newTemplate.name,
-                    "category": {
-                        "href": vm.newTemplate.subCategory.href
-                    }
-                };
-            } else {
-                var payLoad = {
-                    "name": vm.newTemplate.name,
-                    "category": {
-                        "href": vm.newTemplate.category.href
-                    }
-                };
-            }
-
-            //adapt payload if there is a category suggestion
-            if (vm.newTemplate.hasOwnProperty("categorySuggestion") && vm.newTemplate.categorySuggestion != "") {
-                payLoad["categorySuggestion"] = vm.newTemplate.categorySuggestion;
-            }
-
-
-            var createNewTemplate = function() {
-
-                var href = "";
-                if (payLoad.hasOwnProperty("categorySuggestion")) {
-                    href = vm.userdata.URI + "/actions/createTemplateWithCategorySuggestion";
+                //Prepare function vars
+                if (vm.newTemplate.subCategory != null) {
+                    var payLoad = {
+                        "name": vm.newTemplate.name,
+                        "category": {
+                            "href": vm.newTemplate.subCategory.href
+                        }
+                    };
                 } else {
-                    href = vm.userdata.URI + "/actions/createTemplate";
+                    var payLoad = {
+                        "name": vm.newTemplate.name,
+                        "category": {
+                            "href": vm.newTemplate.category.href
+                        }
+                    };
                 }
 
-                return ROService
-                    .PerformFunction(
-                        href,
-                        payLoad, "POST")
-                    .then(
-                        function(data) {
-                            //                            console.log("create new template ");
-                            //                            console.log(data);
+                //adapt payload if there is a category suggestion
+                if (vm.newTemplate.hasOwnProperty("categorySuggestion") && vm.newTemplate.categorySuggestion != "") {
+                    payLoad["categorySuggestion"] = vm.newTemplate.categorySuggestion;
+                }
+
+
+                var createNewTemplate = function() {
+
+                    var href = "";
+                    if (payLoad.hasOwnProperty("categorySuggestion")) {
+                        href = vm.userdata.URI + "/actions/createTemplateWithCategorySuggestion";
+                    } else {
+                        href = vm.userdata.URI + "/actions/createTemplate";
+                    }
+
+                    return ROService
+                        .PerformFunction(
+                            href,
+                            payLoad, "POST")
+                        .then(
+                            function(data) {
+                                //                            console.log("create new template ");
+                                //                            console.log(data);
+                                if (data.success == false) {
+                                    alert("Problem creating new template; please try again");
+                                }
+                                return data;
+                            }
+                        );
+
+                };
+
+                var createNewQuestion = function(templateHref, question, formType) {
+                    var payLoad = {
+                        "question": question,
+                        "formType": formType
+                    };
+                    return ROService
+                        .PerformFunction(templateHref + "/actions/createBasicQuestion", payLoad, "POST")
+                        .then(function(data) {
                             if (data.success == false) {
-                                alert("Problem creating new template; please try again");
+                                alert("Problem creating a question; please check and edit your template");
                             }
                             return data;
-                        }
-                    );
+                        });
+                }
 
-            };
+                // Actual performing of actions for CREATE
+                createNewTemplate()
+                    .then(
+                        function(data) {
+                            //                    console.log("after create new template");
+                            //                    console.log(data.data.result.links[0].href);
+                            var hrefToNewTemplate = data.data.result.links[0].href;
+                            var questions = vm.newTemplate.question;
+                            var formTypes = vm.newTemplate.formType;
+                            var noQuestionRequestMade = true;
+                            for (var key in vm.newTemplate.question) {
+                                console.log(key);
+                                //Test if questions can be made and if so send request to backend
+                                if (questions[key] != "" && formTypes[key] != "") {
+                                    createNewQuestion(hrefToNewTemplate, questions[key], formTypes[key])
+                                        .then(function() {
+                                            //reset userdata
+                                            resetUserData();
+                                        });
+                                    noQuestionRequestMade = false;
+                                }
 
-            var createNewQuestion = function(templateHref, question, formType) {
-                var payLoad = {
-                    "question": question,
-                    "formType": formType
-                };
-                return ROService
-                    .PerformFunction(templateHref + "/actions/createBasicQuestion", payLoad, "POST")
-                    .then(function(data) {
-                        if (data.success == false) {
-                            alert("Problem creating a question; please check and edit your template");
-                        }
-                        return data;
-                    });
+                                //Test if there are questions made for this template. Otherwise alert user
+                                if (noQuestionRequestMade) {
+                                    resetUserData();
+                                    alert("No question was made; please edit your template.");
+                                }
+                            }
+                            //reset form
+                            vm.resetNewTemplate();
+                        });
+
             }
-
-            // Actual performing of actions for CREATE
-            createNewTemplate()
-                .then(
-                    function(data) {
-                        //                    console.log("after create new template");
-                        //                    console.log(data.data.result.links[0].href);
-                        var hrefToNewTemplate = data.data.result.links[0].href;
-                        var questions = vm.newTemplate.question;
-                        var formTypes = vm.newTemplate.formType;
-                        var noQuestionRequestMade = true;
-                        for (var key in vm.newTemplate.question) {
-                            console.log(key);
-                            //Test if questions can be made and if so send request to backend
-                            if (questions[key] != "" && formTypes[key] != "") {
-                                createNewQuestion(hrefToNewTemplate, questions[key], formTypes[key])
-                                    .then(function() {
-                                        //reset userdata
-                                        resetUserData();
-                                    });
-                                noQuestionRequestMade = false;
-                            }
-
-                            //Test if there are questions made for this template. Otherwise alert user
-                            if (noQuestionRequestMade) {
-                                resetUserData();
-                                alert("No question was made; please edit your template.");
-                            }
-                        }
-                        //reset form
-                        vm.resetNewTemplate();
-                    });
-
+            /****************************************************************************************************************************/
+            /****************************************************************************************************************************/
+            /****************************************************************************************************************************/
+        function sendRequest(template){
+            $location.path("/tpl/" + template.id);
         }
     }
 

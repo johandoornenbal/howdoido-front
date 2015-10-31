@@ -1,4 +1,4 @@
-<div class="col-md-6 col-md-offset-3">
+<div class="">
     <h2>Templates administration</h2>
     <!-- *************************************************************************************************
         CREATE NEW TEMPLATE
@@ -114,18 +114,21 @@
 
                         <!--START SECTION FOR TEMPLATE-->
                         <div layout="row">
-                            <div flex='40'>
+                            <div flex='60'>
                                 {{template.name}}
                             </div>
-                            <div flex='20' ng-hide="template.delete">
+                            <div flex='10' ng-hide="template.delete">
                                 <input type="button" ng-click="vm.setEditTemplate(template)" name="edit" value="edit" ng-hide="template.edit" class="btn-xs btn-primary">
                             </div>
-                            <div flex='20' ng-hide="template.edit">
+                            <div flex='10' ng-hide="template.edit">
                                 <input type="button" ng-click="template.delete = true; vm.deleting = true;" name="delete" value="delete" ng-hide="template.delete" class="btn-xs btn-danger">
                                 <input type="button" ng-click="template.delete = false; vm.deleting = false;" name="reset" value="reset" ng-show="template.delete" class="btn-xs btn-warning">
                             </div>
-                            <div flex='20'>
+                            <div flex='10'>
                                 <input type="button" ng-click="vm.copyTemplate(template.URI)" name="copy" value="copy" class="btn-xs btn-warning" ng-hide="template.delete || template.edit">
+                            </div>
+                            <div flex='10'>
+                                <input type="button" ng-click="vm.sendRequest(template)" name="copy" value="ask feedback" class="btn-xs btn-primary" ng-hide="template.delete || template.edit">
                             </div>
                         </div>
                         <!--TEMPLATE NAME-->

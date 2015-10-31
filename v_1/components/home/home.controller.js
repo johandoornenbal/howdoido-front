@@ -7,7 +7,7 @@
         .controller('FormController', FormController);
 
     /////////////// HOMECONTROLLER /////////////////////////////////////////////////////////////////////////////
-    
+
     HomeController.$inject = ['CurrentUserService', '$rootScope', '$routeParams', '$location', 'ROService'];
 
     function HomeController(CurrentUserService, $rootScope, $routeParams, $location, ROService) {
@@ -36,31 +36,24 @@
     }
 
     /////////////// FORMCONTROLLER /////////////////////////////////////////////////////////////////////////////
-    
+
     FormController.$inject = ['$scope', '$location', 'ROService', '$routeParams', '$rootScope', 'CurrentUserService'];
 
     function FormController($scope, $location, ROService, $routeParams, $rootScope, CurrentUserService) {
-        
-        var self=this;
+
+        var self = this;
         self.allTemplates = [];
         self.allUsers = [];
         self.querySearchTemplate = querySearchTemplate;
         self.querySearchUser = querySearchUser;
-        
+
         loadAllUserData();
         getUsers();
-        
-        if ($routeParams.templateId) {
-            $scope.template = $routeParams.templateId;
-            //TODO: function getTemplateById and then
-            //$scope.template = getTemplateById($routeParams.templateId);
-            console.log($scope.template);
-        }
 
         $scope.send = function sendFeedbackRequest() {
             $location.path('/request');
         }
-        
+
         function loadAllUserData() {
             CurrentUserService.GetData()
                 .then(function(userdata) {
@@ -71,11 +64,22 @@
                     $scope.$parent.vm.receivedRequests = userdata.data.user.receivedRequests;
                     $scope.$parent.vm.unratedReceivedFeedback = userdata.data.user.unratedReceivedFeedback;
                     $scope.$parent.vm.receivedFeedback = userdata.data.user.receivedFeedback;
+                    if ($routeParams.templateId) {
+                        self.allTemplates.forEach(
+                            function(template) {
+                                console.log(template.id);
+                                console.log($routeParams.templateId);
+                                if (template.id == $routeParams.templateId) {
+                                    self.template = template;
+                                }
+                            }
+                        );
+                    }
                 });
         }
-        
+
         /////////////// TEMPLATES /////////////////////////////////////////////////////////////////////////////
-        
+
         /**
          * Search for templates
          */
@@ -88,15 +92,15 @@
          * Create filter function for a query string: spaces and case insensitive!!
          */
         function createFilterFor(query) {
-            var lowercaseQuery = angular.lowercase(query).replace(/\s/g,'');
+            var lowercaseQuery = angular.lowercase(query).replace(/\s/g, '');
             return function filterFn(template) {
-                return (template.name.replace(/\s/g,'').toLowerCase().indexOf(lowercaseQuery, 0) != -1 || 
-                       template.category.replace(/\s/g,'').toLowerCase().indexOf(lowercaseQuery, 0) != -1);
+                return (template.name.replace(/\s/g, '').toLowerCase().indexOf(lowercaseQuery, 0) != -1 ||
+                    template.category.replace(/\s/g, '').toLowerCase().indexOf(lowercaseQuery, 0) != -1);
             };
         }
-        
+
         /////////////// USERS /////////////////////////////////////////////////////////////////////////////
-        
+
         function getUsers() {
             ROService.PerformFunction(
                     'services/Api/actions/allUsers',
@@ -107,7 +111,7 @@
                 });
         }
 
-        
+
         /**
          * Search for users
          */
@@ -120,14 +124,14 @@
          * Create filter function for a query string: spaces and case insensitive!!
          */
         function createFilterForUser(query) {
-            var lowercaseQuery = angular.lowercase(query).replace(/\s/g,'');
+            var lowercaseQuery = angular.lowercase(query).replace(/\s/g, '');
             return function filterFn(user) {
-                return (user.title.replace(/\s/g,'').toLowerCase().indexOf(lowercaseQuery, 0) != -1);
+                return (user.title.replace(/\s/g, '').toLowerCase().indexOf(lowercaseQuery, 0) != -1);
             };
         }
-        
+
         /////////////// SEND FORM /////////////////////////////////////////////////////////////////////////////
-        
+
         $scope.sendRequest = function sendRequest(templateUri, userHref) {
 
             var payLoad = {
@@ -157,7 +161,7 @@
         }
 
         /////////////// NAVIGATION /////////////////////////////////////////////////////////////////////////////
-        
+
         $scope.navigateToNewTemplate = function() {
             $location.path('/templates/true');
         }
