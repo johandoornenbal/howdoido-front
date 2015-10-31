@@ -21,6 +21,8 @@
         vm.sendRequestResponse = null;
         vm.receivedFeedback = [];
         vm.unratedReceivedFeedback = [];
+        vm.rate = rateFeedback;
+        vm.rated = feedbackRated;
 
         initController();
 
@@ -31,6 +33,17 @@
 
         vm.createFeedbackUrl = function createFeedbackUrl(uri) {
             return '#/feedback/URL/' + uri;
+        }
+        
+        vm.subview = "all";
+        
+        function rateFeedback(feedback) {
+            console.log(feedback);
+            vm.subview ="rate";
+        }
+        
+        function feedbackRated(){
+            vm.subview ="all";
         }
 
     }

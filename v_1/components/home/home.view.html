@@ -7,217 +7,27 @@
     </div>
 </div>
 
-<!--*******************ASK FEEDBACK*************************-->
 
-<div ng-controller="FormController as ctrl">
-    <form name="form" role="form" novalidate>
-        <div ng-hide="requestSubmitted()">
-            <div class="md-padding">
-                <div>
-                    <h2 class="md-title">Ask feedback</h2>
-                    <div layout="row">
-                        <div flex='100'>
-                            <!--                        <label>Choose template</label>-->
-                            <md-autocomplete md-selected-item="ctrl.template" md-search-text="ctrl.templateSearchText" md-items="template in ctrl.querySearchTemplate(ctrl.templateSearchText)" md-item-text="template.name + ' - ' + template.category" placeholder="Select a template" md-min-length="0" md-floating-label="Choose template">
-                                <md-item-template>
-                                    <span md-highlight-text="ctrl.templateSearchText">{{template.name}} - {{template.category}}</span>
-                                </md-item-template>
-                                <md-not-found>
-                                    No matches found.
-                                </md-not-found>
-                            </md-autocomplete>
-                        </div>
-                    </div>
-                    <div layout="row" ng-hide="email.length > 0">
-                        <div flex='100'>
-                            <!--                        <label>Choose user</label>-->
-                            <md-autocomplete md-selected-item="ctrl.user" md-search-text="ctrl.userSearchText" md-items="user in ctrl.querySearchUser(ctrl.userSearchText)" md-item-text="user.title" placeholder="Select a user" md-min-length="1" md-floating-label="Choose user">
-                                <md-item-template>
-                                    <span md-highlight-text="ctrl.userSearchText">{{user.title}}</span>
-                                </md-item-template>
-                                <md-not-found>
-                                    No matches found.
-                                </md-not-found>
-                            </md-autocomplete>
-                        </div>
-                    </div>
-                    <div layout="row" ng-hide="ctrl.userSearchText.length > 0">
-                        <div flex='100'>
-                            <md-input-container style="margin-right: 0px;">
-                                <label>Or fill in email</label>
-                                <input type="text" ng-model="ctrl.email" name="email">
-                            </md-input-container>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div layout="row">
-                <div flex='33'>
-                    <div class="form-actions">
-                        <button class="btn btn-primary" ng-disabled="!ctrl.template || (!ctrl.user && !ctrl.email)" ng-click="sendRequest(ctrl.template.URI, ctrl.user.href, ctrl.email)">ASK FEEDBACK</button>
-                    </div>
-                </div>
-                <div flex='33'>
-                    <div class="form-actions">
-                        <button class="btn btn-primary" ng-disabled="!ctrl.template || ctrl.userSearchText.length > 0 || ctrl.email.length > 0" ng-click="anonymousFeedback(ctrl.template.URI)">DIRECT FEEDBACK</button>
-                    </div>
-                </div>
-                <div flex='50'>
-                    <div class="form-actions">
-                        <button class="btn btn-primary" ng-disabled="ctrl.template.URI.length > 0" ng-click="navigateToNewTemplate()">New template</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div ng-show="requestSubmitted()" layout="row">
-            <div flex='100'>
-                <div ng-if="sendRequestResponse.length > 0">
-                    <p>Request submitted.</p>
-                    <button class="btn btn-primary" onclick="location.href = ''">Proceed</button>
-                </div>
-                <div ng-if="sendRequestResponseError.length > 0">
-                    <p>Error submitting request. Please try again.</p>
-                    <button class="btn btn-primary" onclick="location.href = ''">Try again</button>
-                </div>
-            </div>
-        </div>
-    </form>
+<div ng-switch="vm.subview">
+    
+    <div ng-switch-when="all">
+        <ng-include src=" 'components/home/feedbackRequest.html' "></ng-include>
+        <ng-include src=" 'components/home/homeViewRemainder.html' "></ng-include>
+    </div>
+    
+    <div ng-switch-when="requestForm">
+        <ng-include src=" 'components/home/feedbackRequest.html' "></ng-include>
+    </div>
+    
+    <div ng-switch-when="remainder">
+        <ng-include src=" 'components/home/homeViewRemainder.html' "></ng-include>
+    </div>
+    
+    <div ng-switch-when="rate">
+        <ng-include src=" 'components/home/rate.html' "></ng-include>
+    </div>
+    
 </div>
 
-<!--*******************ASK FEEDBACK*************************-->
 
-<p>UNRATED RECEIVED FEEDBACK</p>
-<ul>
-    <li ng-repeat="feedback in vm.unratedReceivedFeedback">
 
-        <div layout="row">
-            <div flex='15'>
-                <button ng-disabled="feedback.formRated" class="btn btn-primary">RATE</button>
-            </div>
-            <div flex='15'>
-                <button ng-disabled="feedback.published" class="btn btn-primary">PUBLISH</button>
-            </div>
-            <div flex='70'>
-                Van {{feedback.formCreator}}
-            </div>
-        </div>
-        <div layout="row">
-            <div offset='30' flex='100'>
-                <ul>
-                    <li ng-repeat="answer in feedback.answers">
-                        <div layout="row">
-                            <div flex='10'>
-                                Rating: {{answer.rating}}
-                            </div>
-                            <div flex='90'>
-                                Question: {{answer.questionToAnswer}}
-                            </div>
-                        </div>
-                        <div layout="row">
-                            <div flex='100'>
-                                {{answer.explanation}}
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div layout="row">
-            <div offset='30' flex='15'>
-                Received:
-            </div>
-            <div flex='60'>
-                {{feedback.dateTime}}
-            </div>
-        </div>
-        <hr />
-    </li>
-</ul>
-
-<p>YOUR RECEIVED REQUESTS</p>
-<ul>
-    <li ng-repeat="request in vm.receivedRequests">
-        <div layout="row">
-            <div flex='20'>
-                <a class="btn btn-primary" ng-href="{{vm.createFeedbackUrl(request.id)}}">GIVE FEEDBACK</a>
-            </div>
-            <div flex='80'>
-                Question(s)
-            </div>
-        </div>
-        <div layout="row">
-            <div offset='20' flex='80'>
-                <ul>
-                    <div layout="row">
-                        <div flex='100'>
-                            <li ng-repeat="question in request.questions">
-                                {{question.question}}
-                            </li>
-                        </div>
-                    </div>
-                </ul>
-            </div>
-        </div>
-        <div layout="row">
-            <div offset='20' flex='80'>
-                From: {{request.requestOwnerName}} with email: {{request.requestOwnerEmail}}
-            </div>
-        </div>
-        <div layout="row">
-            <div offset='20' flex='20'>
-                Received:
-            </div>
-            <div flex='60'>
-                {{request.dateTime}}
-            </div>
-        </div>
-        <hr />
-    </li>
-</ul>
-
-<p>ALL RECEIVED FEEDBACK</p>
-<ul>
-    <li ng-repeat="feedback in vm.receivedFeedback">
-        <div layout="row">
-            <div flex='15'>
-                <button class="btn btn-primary" ng-disabled="feedback.formRated">RATE</button>
-            </div>
-            <div flex='15'>
-                <button class="btn btn-primary" ng-disabled="feedback.published">PUBLISH</button>
-            </div>
-            <div flex='70'>
-                Van {{feedback.formCreator}}
-            </div>
-        </div>
-        <div layout="row">
-            <div offset='30' flex='100'>
-                <ul>
-                    <li ng-repeat="answer in feedback.answers">
-                        <div layout="row">
-                            <div flex='10'>
-                                Rating: {{answer.rating}}
-                            </div>
-                            <div flex='90'>
-                                Question: {{answer.questionToAnswer}}
-                            </div>
-                        </div>
-                        <div layout="row">
-                            <div flex='100'>
-                                {{answer.explanation}}
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div layout="row">
-            <div offset='30' flex='15'>
-                Received:
-            </div>
-            <div flex='60'>
-                {{feedback.dateTime}}
-            </div>
-        </div>
-        <hr />
-    </li>
-</ul>
